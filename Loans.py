@@ -42,9 +42,17 @@ class Loan(BaseModel):
         cur = None
         try:
             con,cur = Connection.connection()
+            cur.execute('''SELECT Id FROM Loans where Id = %s ''',(loan_id,))
+            if cur.fetchone() is None:
+                raise HTTPException(
+                    status_code=404,
+                    detail=f"Loan with id {loan_id} doesnt exists"
+                )
             cur.execute('''UPDATE Loans SET date_Returned = CURRENT_TIMESTAMP where id = %s''',(loan_id,))
             con.commit()
             return 'Loan has been returned'
+        except HTTPException:
+            raise
         except Exception as error:
             return f"Error occured at return_loan : {error}"
 
