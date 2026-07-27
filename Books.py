@@ -1,5 +1,6 @@
 import Connection
 from pydantic import Field,BaseModel,field_validator
+from fastapi import HTTPException
 
 class Book(BaseModel):
     name : str = Field(min_length=2,max_length=120,description='Add book name.')
@@ -14,9 +15,19 @@ class Book(BaseModel):
         cur = None
         try:
             con,cur = Connection.connection()
+            cur.execute('''SELECT Id FROM Authors where Id = %s''',(self.author_id,))
+            if cur.fetchone() is None:
+                raise HTTPException(
+                    status_code=404,
+                    detail=f"Author with id {self.author_id} doesnt exists"
+                )
             cur.execute('''INSERT INTO Books (Name,Author_Id) VALUES (%s,%s)''',(self.name,self.author_id))
             con.commit()
             return 'Book has been added'
+        
+        except HTTPException:
+            raise
+        
         except Exception as error:
             return f"Error occured at add_book : {error}"
 
