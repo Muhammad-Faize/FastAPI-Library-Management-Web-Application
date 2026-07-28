@@ -1,6 +1,7 @@
 from fastapi import Form
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.templating import Jinja2Templates
+from pydantic import ValidationError
 import Authors,Books,Borrowers,Loans,Create_table
 
 app = FastAPI() 
@@ -12,34 +13,52 @@ templates = Jinja2Templates(directory="templates")
 def menu_page(request: Request):
     return templates.TemplateResponse(
         request=request,
-        name="index.html",
+        name="index2.html",
         context={
             "request": request
         })
 
 @app.post('/add-author')
 def create_author(name:str = Form(...)):
-    author = Authors.Author(name = name)
-    author.add_author()
-    return 
+    try:
+        author = Authors.Author(name = name)
+    except ValidationError as e:
+        raise HTTPException(status_code=400, detail=e.errors()) from e
+    result = author.add_author()
+    return {
+        "success": True,
+        "message": result
+    }
 
 @app.post('/add-book')
 def create_book(name:str = Form(...),author_id :int = Form(...)):
     book = Books.Book(name = name,author_id=author_id)
-    book.add_book()
-    return
+    result = book.add_book()
+    return {
+        "success": True,
+        "message": result
+    }
 
 @app.post('/add-borrower')
 def create_borrower(name:str = Form(...)):
-    borrower = Borrowers.Borrower(name = name)
-    borrower.add_borrower()
-    return
+    try:
+        borrower = Borrowers.Borrower(name = name)
+    except ValidationError as e:
+        raise HTTPException(status_code=400, detail=e.errors()) from e
+    result = borrower.add_borrower()
+    return {
+        "success": True,
+        "message": result
+    }
 
 @app.post('/get-loan')
 def create_loan(borrower_id:int = Form(...),book_id:int = Form(...)):
     loan = Loans.Loan(borrower_id=borrower_id,book_id=book_id)
-    loan.get_loan()
-    return
+    result = loan.get_loan()
+    return {
+        "success": True,
+        "message": result
+    }
 
 @app.put('/return-loan')
 def create_return_loan(loan_id:int = Form(...)):
@@ -55,8 +74,10 @@ def get_borrowed_books():
 
 @app.get('/get-books-by-borrower/{borrower_name}')
 def get_books_by_borrower(borrower_name:str):    
-    return Books.Book.get_books_by_borrower(borrower_name)    
+    data = Books.Book.get_books_by_borrower(borrower_name)    
+    print(data)
+    return data
 
-@app.get('/get-book-advanced')
+@app.get('/get-book-advanced')  
 def get_book_advanced(search:str):
     return Books.Book.get_book_advanced(search)

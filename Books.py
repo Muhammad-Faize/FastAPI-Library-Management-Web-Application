@@ -29,7 +29,10 @@ class Book(BaseModel):
             raise
         
         except Exception as error:
-            return f"Error occured at add_book : {error}"
+            raise HTTPException(
+                status_code=500,
+                detail = f"Error occured at add_book : {error}"
+            )
 
         finally:
             if cur:
@@ -48,7 +51,10 @@ class Book(BaseModel):
                 return 'No record exists'
             return data
         except Exception as error:
-            return f"Error occured at get book : {error}"
+            raise HTTPException(
+                status_code=500,
+                detail = f"Error occured at get_books : {error}"
+            )
 
         finally:
             if cur:
@@ -66,8 +72,7 @@ class Book(BaseModel):
                                 b.Name AS Book_Name,
                                 br.Name AS Last_Borrower,
                                 l.Date_Borrowed,
-                                l.Date_Returned,
-                                l.Book_Status
+                                l.Date_Returned
 
                                 FROM Books b
 
@@ -75,7 +80,7 @@ class Book(BaseModel):
                                 ON l.Id = (
                                     SELECT MAX(Id)
                                     FROM Loans
-                                    WHERE Book_Id = b.Id
+                                    WHERE book_id = b.Id
                                 )
 
                                 LEFT JOIN Borrowers br
@@ -85,7 +90,6 @@ class Book(BaseModel):
             if len(data) == 0:
                 return 'no record exists'
             for loan in data:
-
                 if loan['date_borrowed'] is None:
                     loan['book_status'] = 'Available'
 
@@ -96,7 +100,10 @@ class Book(BaseModel):
                     loan['book_status'] = 'Available'
             return data
         except Exception as error:
-            return f"Error occured at get_borrowed_book : {error}"
+            raise HTTPException(
+                status_code=500,
+                detail = f"Error occured at get_borrowed_books : {error}"
+            )
 
         finally:
             if cur:
@@ -109,15 +116,19 @@ class Book(BaseModel):
         cur = None
         try:
             con,cur = Connection.connection()
-            cur.execute('''SELECT Loans.Id as Loan_Id, Borrowers.Name as Borrower_Name ,Loans.Book_Id,Loans.Date_Borrowed,Loans.Date_Returned FROM Borrowers JOIN Loans ON Borrowers.Id = Loans.Borrower_Id WHERE Borrowers.Name ILIKE %s AND date_returned is null''',(borrower_name,))
+            borrower_name = borrower_name.title()
+            cur.execute('''SELECT Loans.Id as Loan_Id, Borrowers.Name as Borrower_Name ,Loans.Book_Id,Loans.Date_Borrowed,Loans.Date_Returned FROM Borrowers JOIN Loans ON Borrowers.Id = Loans.Borrower_Id WHERE Borrowers.Name ILIKE %s AND date_returned is null''',(f"%{borrower_name}%",))
             data = [dict(row) for row in cur.fetchall()]
             if len(data) >= 1:
                 return data
             else:
-                return 'No books were borrowed by such borrower'
+                return []
 
         except Exception as error:
-            return f"Error occured at get_book_by_borrower : {error}"
+            raise HTTPException(
+                status_code=500,
+                detail = f"Error occured at get_books_by_borrower : {error}"
+            )
 
         finally:
             if cur:
@@ -129,15 +140,20 @@ class Book(BaseModel):
         con = None
         cur = None
         try:
+            if not user_inp.strip():
+                return []   
             con,cur = Connection.connection()
-            cur.execute('''SELECT Authors.Name as Author_Name,Books.Name as Book_Name FROM Authors INNER JOIN Books ON Authors.Id = Books.Author_Id WHERE Authors.Name ILIKE %s OR Books.Name ILIKE %s''',(user_inp,user_inp))
+            cur.execute('''SELECT Authors.Name as Author_Name,Books.Name as Book_Name FROM Authors INNER JOIN Books ON Authors.Id = Books.Author_Id WHERE Authors.Name ILIKE %s OR Books.Name ILIKE %s''',(f"%{user_inp.title()}%",f"%{user_inp.title()}%"))
             data = [dict(row) for row in cur.fetchall()]
             if len(data) >= 1:
                 return data
             else:
-                return 'No record exist for such entry'
+                return []
         except Exception as error:
-            return f"Error occured at get_book_advance : {error}"
+            raise HTTPException(
+                status_code=500,
+                detail = f"Error occured at get_book_advance : {error}"
+            )
 
         finally:
             if cur:
