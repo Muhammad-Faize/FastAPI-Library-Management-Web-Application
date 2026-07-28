@@ -1,37 +1,49 @@
-
-from fastapi import FastAPI
+from fastapi import Form
+from fastapi import FastAPI, Request
+from fastapi.templating import Jinja2Templates
 import Authors,Books,Borrowers,Loans,Create_table
 
 app = FastAPI() 
 Create_table.create_table()
 
-@app.get('/')
-def menu_page():
-    return "Welcome to Library Management App."
+templates = Jinja2Templates(directory="templates")
 
-@app.post('/add-author',response_model=Authors.Author)
-def create_author(author:Authors.Author):
+@app.get("/")
+def menu_page(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html",
+        context={
+            "request": request
+        })
+
+@app.post('/add-author')
+def create_author(name:str = Form(...)):
+    author = Authors.Author(name = name)
     author.add_author()
-    return author
-            
-@app.post('/add-book',response_model=Books.Book)
-def create_book(book:Books.Book):
-    book.add_book()
-    return book
+    return 
 
-@app.post('/add-borrower',response_model=Borrowers.Borrower)
-def create_borrower(borrower:Borrowers.Borrower):
+@app.post('/add-book')
+def create_book(name:str = Form(...),author_id :int = Form(...)):
+    book = Books.Book(name = name,author_id=author_id)
+    book.add_book()
+    return
+
+@app.post('/add-borrower')
+def create_borrower(name:str = Form(...)):
+    borrower = Borrowers.Borrower(name = name)
     borrower.add_borrower()
-    return borrower
-    
-@app.post('/get-loan',response_model=Loans.Loan)
-def create_loan(loan : Loans.Loan):
+    return
+
+@app.post('/get-loan')
+def create_loan(borrower_id:int = Form(...),book_id:int = Form(...)):
+    loan = Loans.Loan(borrower_id=borrower_id,book_id=book_id)
     loan.get_loan()
-    return loan
+    return
 
 @app.put('/return-loan')
-def create_return_loan(loan_id:int):
-    return Loans.Loan.return_loan(loan_id)
+def create_return_loan(loan_id:int = Form(...)):
+    return Loans.Loan.return_loan(loan_id) 
     
 @app.get('/get-books')
 def get_books():

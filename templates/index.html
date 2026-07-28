@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management App</title>
+</head>
+<body>
+    <div>
+        <h1>Welcome to the site</h1>
+        <h3>Features:   </h3>
+    </div><br>
+    <div>
+        <form id = addAuthor>1. Add author
+        <input type="text" placeholder="Enter Name:" name="name" required>
+        <button type ='submit'>Add</button>
+        </form>
+    </div><br>
+    <div>
+        <form id = addBook>2. Add book <br>
+        <input type="text" placeholder="Enter Name:" name="name" required><br>
+        <input type ="number" min="1" placeholder ="Enter Author ID" name ="author_id" required><br>
+        <button type ='submit'>Add</button>
+        </form>
+    </div><br>
+    <div>
+        <form id = addBorrower>3. Add borrower
+        <input type="text" placeholder="Enter Name:" name ="name" required>
+        <button type ='submit'>Add</button>
+        </form>
+    </div><br>
+    <div>
+        <form id = getLoan>4. Get Loan<br>
+        <input type="number" placeholder="Enter Borrower ID:" min="1" name= "borrower_id" required><br>
+        <input type="number" placeholder="Enter Book ID:" min="1" name ="book_id" required><br>
+        <button type ='submit' >Add</button>
+        </form>
+    </div><br>
+    <div>
+        <form id = returnLoan>5. Return Loan 
+        <input type="number" placeholder="Enter Loan ID:" min="1" name="loan_id" required>
+        <button type ='submit'>Add</button>
+        </form>
+    </div><br>
+<script>
+    const formAuthor = document.getElementById('addAuthor');
+    formAuthor.addEventListener('submit',function(event){
+        event.preventDefault()
+        let formData = new FormData(formAuthor);
+        fetch("/add-author",{
+            method:"POST",
+            body: formData
+        }).then(response => response.json()).catch(error => console.log(error))
+    });
+    const formBook = document.getElementById('addBook');
+    formBook.addEventListener('submit',function(event){
+        event.preventDefault()
+        let formData = new FormData(formBook);
+        fetch("/add-book",{
+            method:"POST",
+            body: formData
+        }).then(response => response.json()).catch(error => console.log(error))
+    });
+    const formBorrower = document.getElementById('addBorrower');
+    formBorrower.addEventListener('submit',function(event){
+        event.preventDefault()
+        let formData = new FormData(formBorrower);
+        fetch("/add-borrower",{
+            method:"POST",
+            body: formData
+        }).then(response => response.json()).catch(error => console.log(error))
+    });
+    const formGetLoan = document.getElementById('getLoan');
+    formGetLoan.addEventListener('submit',function(event){
+        event.preventDefault()
+        let formData = new FormData(formGetLoan);
+        fetch("/get-loan",{
+            method:"POST",
+            body: formData
+        }).then(response => response.json()).catch(error => console.log(error))
+    });
+    const formReturnLoan = document.getElementById('returnLoan');
+    formReturnLoan.addEventListener('submit',function(event){
+        event.preventDefault()
+        let formData = new FormData(formReturnLoan);
+        fetch("/return-loan",{
+            method:"PUT",
+            body: formData
+        }).then(response => response.json()).catch(error => console.log(error))
+    });
+
+</script>
+</body>
+</html>
