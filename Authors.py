@@ -65,7 +65,8 @@ class Author(BaseModel):
         cur = None
         try:
             con,cur = Connection.connection()
-            name = cur.execute("Select name FROM Authors where id = %s;",(id,))
+            cur.execute("Select name FROM Authors where id = %s;",(id,))
+            name = cur.fetchone()
             return name['name']
        
         except Exception as error:

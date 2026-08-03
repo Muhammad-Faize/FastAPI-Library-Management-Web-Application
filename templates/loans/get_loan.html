@@ -4,40 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Get Loans</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <h2>List of Loans</h2>
-    <table border="2">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Book Name</th>
-                <th>Borrower Name</th>
-                <th>Status</th>
-                <th>Date Borrowed</th>
-                <th>Date Returned</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for loan in loans%}
-            <tr>
-                <td>{{loan.id}}</td>
-                <td>{{loan.book_name}}</td>
-                <td>{{loan.borrower_name}}</td>
-                <td>{{loan.book_status}}</td>
-                <td>{{loan.date_borrowed}}</td>
-                <td>{{loan.date_returned}}</td>
-                <td><a href="/update-loan-page/{{loan.id}}" style="text-decoration:none; color:black;">✏️</a></td>
-                <td><a href="/delete-loan-page/{{loan.id}}" style="text-decoration:none; color:black;">🗑️</a></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <form action="/add-loan-page" method="GET">
-        <button>ADD</button>
-    </form>
-    <form action="/return-loan-page" method="GET">
-        <button>Return</button>
-    </form>
+    <div class="page-card">
+        <h2>List of Loans</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Book Name</th>
+                    <th>Borrower Name</th>
+                    <th>Status</th>
+                    <th>Date Borrowed</th>
+                    <th>Date Returned</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for loan in loans%}
+                <tr>
+                    <td>{{loan.id}}</td>
+                    <td>{{loan.book_name}}</td>
+                    <td>{{loan.borrower_name}}</td>
+                    <td>{{loan.book_status}}</td>
+                    <td>{{loan.date_borrowed}}</td>
+                    <td>{{loan.date_returned}}</td>
+                    <td><a class="icon-link" href="/update-loan-page/{{loan.id}}" aria-label="Edit loan">✏️</a></td>
+                    <td><a class="icon-link danger" href="/delete-loan-page/{{loan.id}}" aria-label="Delete loan">🗑️</a></td>
+                    <td><a class="icon-link" href="/return-loan/{{loan.id}}" aria-label="Return loan">↩️</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="page-actions">
+            <form action="/add-loan-page" method="GET">
+                <button type="submit">ADD</button>
+            </form>
+            <form action="/" method="GET">
+                <button type="submit" class="secondary">Back to main page</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

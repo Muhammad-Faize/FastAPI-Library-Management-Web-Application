@@ -4,29 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Get Borrower</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <h2>Lists of Borrowers</h2>
-    <table border="2">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for borrower in borrowers %}
-            <tr>
-                <td>{{borrower.id}}</td>
-                <td>{{borrower.name}}</td>
-                <td><a href="/update-borrower-page/{{borrower.id}}" style="text-decoration:none; color:black;">✏️</a></td>
-                <td><a href="/delete-borrower-page/{{borrower.id}}" style="text-decoration:none; color:black;">🗑️</a></td>
-            </tr>
-            {%endfor%}
-        </tbody>
-    </table>
-    <form action="/add-borrower-page" method="GET">
-        <button>Add</button>
-    </form>
+    <div class="page-card">
+        <h2>Lists of Borrowers</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for borrower in borrowers %}
+                <tr>
+                    <td>{{borrower.id}}</td>
+                    <td>{{borrower.name}}</td>
+                    <td><a class="icon-link" href="/update-borrower-page/{{borrower.id}}" aria-label="Edit borrower">✏️</a></td>
+                    <td><a class="icon-link danger" href="/delete-borrower-page/{{borrower.id}}" aria-label="Delete borrower">🗑️</a></td>
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+        <div class="page-actions">
+            <form action="/add-borrower-page" method="GET">
+                <button type="submit">Add</button>
+            </form>
+            <form action="/" method="GET">
+                <button type="submit" class="secondary">Back to main page</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

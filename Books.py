@@ -58,6 +58,7 @@ class Book(BaseModel):
                 con.close()  
     
     @staticmethod
+    @staticmethod
     def delete_book(id):  
         con = None
         cur = None

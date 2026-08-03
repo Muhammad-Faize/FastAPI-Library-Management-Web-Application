@@ -4,31 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Get Books</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <h2>List of Books</h2>
-    <table border="2">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Author Name</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for book in books %}
-            <tr>
-                <td>{{book.id}}</td>
-                <td>{{book.name}}</td>
-                <td>{{book.author_name}}</td>
-            <td><a href="/update-book-page/{{book.id}}" style="text-decoration: none; color:black;">✏️</a></td>
-            <td><a href="/delete-book-page/{{book.id}}" style="text-decoration: none; color:black;">🗑️</a></td>
-            </tr>
-            {% endfor%}
-        </tbody>
-    </table>
-    <form action="/add-book-page" method="GET">
-        <button>ADD</button>
-    </form>
+    <div class="page-card">
+        <h2>List of Books</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Author Name</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in books %}
+                <tr>
+                    <td>{{book.id}}</td>
+                    <td>{{book.name}}</td>
+                    <td>{{book.author_name}}</td>
+                    <td><a class="icon-link" href="/update-book-page/{{book.id}}" aria-label="Edit book">✏️</a></td>
+                    <td><a class="icon-link danger" href="/delete-book-page/{{book.id}}" aria-label="Delete book">🗑️</a></td>
+                </tr>
+                {% endfor%}
+            </tbody>
+        </table>
+        <div class="page-actions">
+            <form action="/add-book-page" method="GET">
+                <button type="submit">ADD</button>
+            </form>
+            <form action="/" method="GET">
+                <button type="submit" class="secondary">Back to main page</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

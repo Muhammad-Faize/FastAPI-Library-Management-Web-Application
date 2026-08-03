@@ -1,17 +1,20 @@
 from fastapi import Form
 from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import Authors,Books,Borrowers,Loans,Create_table
 
 app = FastAPI() 
 Create_table.create_table()
 
+app.mount("/static", StaticFiles(directory="."), name="static")
+
 templates = Jinja2Templates(directory="templates")
 
 @app.get("/")
 def menu_page(request: Request):
     return templates.TemplateResponse(
-        request=request,
+        request=request,    
         name="index.html",
         context={
             "request": request  
@@ -34,9 +37,15 @@ def add_author_page(request:Request):
     )
     
 @app.post('/add-author')
-def create_author(name:str = Form(...)):
+def add_author(request:Request,name:str = Form(...)):
     author = Authors.Author(name = name)
-    return author.add_author()
+    return_path = '/get-author'
+    msg = author.add_author()
+    return templates.TemplateResponse(
+        request,
+        "output.html",
+        {"request":request,"msg":msg,"return_path":return_path}
+    )
 #----------------------------------------------
 @app.get('/delete-author-page/{id}')
 def delete_author_page(request:Request,id:int):
@@ -49,8 +58,14 @@ def delete_author_page(request:Request,id:int):
         }
     )
 @app.post('/delete-author')
-def delete_author(id:int = Form(...)):
-    return Authors.Author.delete_author(id)
+def delete_author(request:Request,id:int = Form(...)):
+    msg = Authors.Author.delete_author(id)
+    return_path = '/get-author'
+    return templates.TemplateResponse(
+        request,
+        "output.html",
+        {"request":request,"msg":msg,"return_path":return_path}
+    )
 #---------------------------------------------
 @app.get('/update-author-page/{id}')
 def update_author_page(request:Request,id:int):
@@ -65,8 +80,14 @@ def update_author_page(request:Request,id:int):
         }
     )
 @app.post('/update-author')
-def update_author(id:int = Form(...),name:str = Form(...)):
-    return Authors.Author.update_author(id,name)
+def update_author(request:Request,id:int = Form(...),name:str = Form(...)):
+    msg = Authors.Author.update_author(id,name)
+    return_path = '/get-author'
+    return templates.TemplateResponse(
+        request,
+        "output.html",
+        {"request":request,"msg":msg,"return_path":return_path}
+    )    
 #---------------------------------------------
 @app.get("/get-borrower")
 def get_borrower(request:Request):
@@ -87,9 +108,16 @@ def add_borrower_page(request:Request):
     )
 
 @app.post("/add-borrower")
-def add_borrower(name:str = Form(...)):
+def add_borrower(request:Request,name:str = Form(...)):
     borrower = Borrowers.Borrower(name = name)
-    return borrower.add_borrower()
+    msg = borrower.add_borrower()
+    return_path = '/get-borrower'
+    return templates.TemplateResponse(
+        request,
+        "output.html",
+        {"request":request,"msg":msg,"return_path":return_path}
+    ) 
+
 #------------------------------------------------
 @app.get("/delete-borrower-page/{id}")
 def delete_borrower_page(request:Request,id:int):
@@ -100,8 +128,14 @@ def delete_borrower_page(request:Request,id:int):
     )
     
 @app.post("/delete-borrower")
-def delete_borrower(id:int = Form(...)):
-    return Borrowers.Borrower.delete_borrower(id)
+def delete_borrower(request:Request,id:int = Form(...)):
+    msg = Borrowers.Borrower.delete_borrower(id)
+    return_path = '/get-borrower'
+    return templates.TemplateResponse(
+        request,
+        "output.html",
+        {"request":request,"msg":msg,"return_path":return_path}
+    ) 
 #------------------------------------------------
 @app.get("/update-borrower-page/{id}")
 def update_borrower_page(request:Request,id:int):
@@ -113,8 +147,14 @@ def update_borrower_page(request:Request,id:int):
     )
     
 @app.post("/update-borrower")
-def update_borrower(id:int = Form(...),name:str = Form(...)):
-    return Borrowers.Borrower.update_borrower(id,name)
+def update_borrower(request:Request,id:int = Form(...),name:str = Form(...)):
+    msg = Borrowers.Borrower.update_borrower(id,name)
+    return_path = '/get-borrower'
+    return templates.TemplateResponse(
+        request,
+        "output.html",
+        {"request":request,"msg":msg,"return_path":return_path}
+    ) 
 #-------------------------------------------------- 
 
 @app.get("/get-book")
@@ -128,16 +168,22 @@ def get_books(request:Request):
 #--------------------------------------------------
 @app.get("/add-book-page")
 def add_book_page(request:Request):
-    books = Books.Book.get_book()
+    books = Authors.Author.get_auhtor()
     return templates.TemplateResponse(
         request,
         "books/add_book.html",
         {"request":request,"books":books}
     )
 @app.post("/add-book")
-def add_book(name:str = Form(...),author_id:int=Form(...)):
+def add_book(request:Request,name:str = Form(...),author_id:int=Form(...)):
     book = Books.Book(name = name,author_id = author_id)
-    return book.add_book()
+    msg = book.add_book()
+    return_path = '/get-book'
+    return templates.TemplateResponse(
+        request,
+        "output.html",
+        {"request":request,"msg":msg,"return_path":return_path}
+    ) 
 #----------------------------------------------------
 @app.get("/delete-book-page/{id}")
 def delete_book_page(request:Request,id:int):
@@ -148,8 +194,14 @@ def delete_book_page(request:Request,id:int):
     )
     
 @app.post("/delete-book")
-def delete_book(id:int = Form(...)):
-    return Books.Book.delete_book(id)    
+def delete_book(request:Request,id:int = Form(...)):
+    msg = Books.Book.delete_book(id)    
+    return_path = '/get-book'
+    return templates.TemplateResponse(
+        request,
+        "output.html",
+        {"request":request,"msg":msg,"return_path":return_path}
+    ) 
 #----------------------------------------------------
 @app.get("/update-book-page/{id}")
 def update_book_page(request:Request,id:int):
@@ -160,8 +212,14 @@ def update_book_page(request:Request,id:int):
         {"request":request,"id":id,"name":name}
     )
 @app.post("/update-book")
-def update_book(id:int = Form(...),name:str = Form(...)):
-    return Books.Book.update_book(id,name)
+def update_book(request:Request,id:int = Form(...),name:str = Form(...)):
+    msg = Books.Book.update_book(id,name)
+    return_path = '/get-book'
+    return templates.TemplateResponse(
+        request,
+        "output.html",
+        {"request":request,"msg":msg,"return_path":return_path}
+    ) 
 #-------------------------------------------------------
 @app.get("/get-loan")
 def get_loans(request:Request):
@@ -182,20 +240,25 @@ def add_loan_page(request:Request):
         {"request":request,"borrowers":borrowers,"books":books}
     )
 @app.post("/add-loan")
-def add_loan(borrower_id:int = Form(...),book_id:int = Form(...)):
+def add_loan(request:Request,borrower_id:int = Form(...),book_id:int = Form(...)):
     loan = Loans.Loan(borrower_id=borrower_id,book_id=book_id)
-    return loan.add_loan()
-#----------------------------------------------------------
-@app.get("/return-loan-page")
-def return_loan_page(request:Request):
+    msg = loan.add_loan()
+    return_path = '/get-loan'
     return templates.TemplateResponse(
         request,
-        "/loans/return_loan.html",
-        {"request":request}
-    )
-@app.post("/return-loan")
-def return_loan(id:int = Form(...)):
-    return Loans.Loan.return_loan(id)
+        "output.html",
+        {"request":request,"msg":msg,"return_path":return_path}
+    ) 
+#----------------------------------------------------------
+@app.get("/return-loan/{id}")
+def return_loan(request:Request,id:int):
+    msg = Loans.Loan.return_loan(id)
+    return_path = '/get-loan'
+    return templates.TemplateResponse(
+        request,
+        "output.html",
+        {"request":request,"msg":msg,"return_path":return_path}
+    ) 
 #----------------------------------------------------------
 @app.get("/delete-loan-page/{id}")
 def delete_book_page(request:Request,id:int):
@@ -206,8 +269,14 @@ def delete_book_page(request:Request,id:int):
     )
     
 @app.post("/delete-loan")
-def delete_book(id:int = Form(...)):
-    return Loans.Loan.delete_loan(id)   
+def delete_book(request:Request,id:int = Form(...)):
+    msg = Loans.Loan.delete_loan(id)  
+    return_path = '/get-loan'
+    return templates.TemplateResponse(
+        request,
+        "output.html",
+        {"request":request,"msg":msg,"return_path":return_path}
+    )  
 #-----------------------------------------------------------
 @app.get("/update-loan-page/{id}")
 def update_loan_page(request:Request,id:int):
@@ -219,5 +288,12 @@ def update_loan_page(request:Request,id:int):
         {"request":request,"id":id,"o_book":o_book,"o_borrower":o_borrower,"o_book_name":o_book_name,"o_borrower_name":o_borrower_name,"borrowers":borrowers,"books":books}
     )
 @app.post("/update-loan")
-def update_loan(id:int=Form(...),book_id:int = Form(...),borrower_id:int = Form(...)):
-    return Loans.Loan.update_loan(id,book_id,borrower_id)
+def update_loan(request:Request,id:int=Form(...),book_id:int = Form(...),borrower_id:int = Form(...)):
+    msg = Loans.Loan.update_loan(id,book_id,borrower_id)
+    return_path = '/get-loan'
+    return templates.TemplateResponse(
+        request,
+        "output.html",
+        {"request":request,"msg":msg,"return_path":return_path}
+    ) 
+#-------------------------------------------------------------

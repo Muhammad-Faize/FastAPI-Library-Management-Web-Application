@@ -3,20 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>library Management System</title>
+    <title>Library Management System</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <h1>Library Management Sysetem</h1>
-    <h2>Features</h2>
-    <div>
-        <p style="font-size:22px">1. Authors</p>
-        <a href="/get-author" style="text-decoration:none; color:black; font-size:30px;">▶️</a>
-        <p style="font-size:22px">2. Books</p>
-        <a href="/get-book" style="text-decoration:none; color:black; font-size:30px;">▶️</a>
-        <p style="font-size:22px">3. Borrowers</p>
-        <a href="/get-borrower" style="text-decoration:none; color:black; font-size:30px;">▶️</a>
-        <p style="font-size:22px">4. Loans</p>
-        <a href="/get-loan" style="text-decoration:none; color:black; font-size:30px;">▶️</a>
+    <div class="page-card">
+        <h1>Library Management System</h1>
+        <p class="subtitle">Manage authors, books, borrowers, and loans from one simple dashboard.</p>
+        <h2>Features</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <p>1. Authors</p>
+                <a href="/get-author">View Authors →</a>
+            </div>
+            <div class="feature-card">
+                <p>2. Books</p>
+                <a href="/get-book">View Books →</a>
+            </div>
+            <div class="feature-card">
+                <p>3. Borrowers</p>
+                <a href="/get-borrower">View Borrowers →</a>
+            </div>
+            <div class="feature-card">
+                <p>4. Loans</p>
+                <a href="/get-loan">View Loans →</a>
+            </div>
+        </div>
     </div>
 </body>
 </html>

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add book</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <form action="/add-book" method="POST">
@@ -11,7 +12,7 @@
         <select name="author_id" required>
             <option value="">--Select Author--</option>
             {% for book in books%}
-            <option value="{{book.author_id}}">{{book.author_name}}</option>
+            <option value="{{book.id}}">{{book.name}}</option>
             {% endfor %}
         </select>
         <button>Add</button>
