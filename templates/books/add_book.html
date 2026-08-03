@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add book</title>
+</head>
+<body>
+    <form action="/add-book" method="POST">
+        <input type="text" placeholder="Enter book name" name="name" >
+        <select name="author_id" required>
+            <option value="">--Select Author--</option>
+            {% for book in books%}
+            <option value="{{book.author_id}}">{{book.author_name}}</option>
+            {% endfor %}
+        </select>
+        <button>Add</button>
+    </form>
+</body>
+</html>

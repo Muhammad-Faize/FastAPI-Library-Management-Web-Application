@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All_Authors</title>
+</head>
+<body>
+    <h2>Lists of Authors</h2>
+    <table border="2" >
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for author in authors %}
+        <tr>
+            <td>{{ author.id }}</td>
+            <td>{{ author.name }}</td>
+            <td><a href="/update-author-page/{{author.id}}" style="text-decoration: none; color:black;">✏️</a></td>
+            <td><a href="/delete-author-page/{{author.id}}" style="text-decoration: none; color:black;">🗑️</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <form action="add-author-page" method="GET">
+        <button>ADD</button>
+    </form>
+</body>
+
+</html>

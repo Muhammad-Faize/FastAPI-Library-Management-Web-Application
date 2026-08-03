@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Books</title>
+</head>
+<body>
+    <h2>List of Books</h2>
+    <table border="2">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Author Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+            <tr>
+                <td>{{book.id}}</td>
+                <td>{{book.name}}</td>
+                <td>{{book.author_name}}</td>
+            <td><a href="/update-book-page/{{book.id}}" style="text-decoration: none; color:black;">✏️</a></td>
+            <td><a href="/delete-book-page/{{book.id}}" style="text-decoration: none; color:black;">🗑️</a></td>
+            </tr>
+            {% endfor%}
+        </tbody>
+    </table>
+    <form action="/add-book-page" method="GET">
+        <button>ADD</button>
+    </form>
+</body>
+</html>

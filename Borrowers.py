@@ -8,8 +8,6 @@ class Borrower(BaseModel):
     @field_validator('name')
     def clean_name(cls,name):
         name = name.strip().title()
-        if not name:
-            raise ValueError("Name cannot be empty")
         if name.isdigit():
             raise ValueError("The entered value cannot contain numbers")
         return name
@@ -18,15 +16,99 @@ class Borrower(BaseModel):
         cur = None
         try:
             con,cur = Connection.connection()
+            cur.execute('''SELECT * FROM Borrowers''')
+            borrowers = [dict(row) for row in cur.fetchall()]
+            for borrower in borrowers:
+                if borrower['name'] == self.name:
+                    return f"borrower with name '{self.name}' already exists"
             cur.execute('''INSERT INTO Borrowers (Name) VALUES (%s)''',(self.name,))
             con.commit()
-            return 'Borrower has been added'
-        except HTTPException:
-            raise
+            return 'Borrower added successfully'
         except Exception as error:
             raise HTTPException(
                 status_code=500,
                 detail = f"Error occured at add_borrower : {error}"
+            )
+        finally:
+            if cur:
+                cur.close()
+            if con:
+                con.close()  
+    @staticmethod
+    def get_borrower():
+        con = None
+        cur = None
+        try:
+            con,cur = Connection.connection()
+            cur.execute('''SELECT * FROM Borrowers ORDER BY id''')
+            borrowers = [dict(row) for row in cur.fetchall()]
+            return borrowers
+        except Exception as error:
+            raise HTTPException(
+                status_code=500,
+                detail = f"Error occured at get_borrower : {error}"
+            )
+        finally:
+            if cur:
+                cur.close()
+            if con:
+                con.close() 
+    @staticmethod
+    def get_borrower_by_id(id):
+        con = None
+        cur = None
+        try:
+            con,cur = Connection.connection()
+            cur.execute('''SELECT name FROM Borrowers WHERE id = %s''',(id,))
+            name = cur.fetchone()
+            return name['name']
+        except Exception as error:
+            raise HTTPException(
+                status_code=500,
+                detail = f"Error occured at get_borrower_by_id : {error}"
+            )
+        finally:
+            if cur:
+                cur.close()
+            if con:
+                con.close() 
+    
+    @staticmethod
+    def delete_borrower(id):
+        con = None
+        cur = None
+        try:
+            con,cur = Connection.connection()
+            cur.execute('DELETE FROM Borrowers WHERE id = %s',(id,))
+            con.commit()
+            return 'Borrower has been deleted'
+        except Exception as error:
+            raise HTTPException(
+                status_code=500,
+                detail = f"Error occured at delete_borrower : {error}"
+            )
+        finally:
+            if cur:
+                cur.close()
+            if con:
+                con.close()      
+    @staticmethod
+    def update_borrower(id,name):
+        con = None
+        cur = None
+        try:
+            name = name.title()
+            con,cur = Connection.connection()
+            cur.execute('''SELECT * FROM Borrowers WHERE id != %s AND NAME ILIKE %s ''',(id,name))
+            if cur.fetchone():
+                return f"Borrower with name {name} already exists"
+            cur.execute('''UPDATE Borrowers set name = %s where id = %s ''',(name,id))
+            con.commit()
+            return 'Borrowoer has been updated'
+        except Exception as error:
+            raise HTTPException(
+                status_code=500,
+                detail = f"Error occured at update_borrower : {error}"
             )
         finally:
             if cur:

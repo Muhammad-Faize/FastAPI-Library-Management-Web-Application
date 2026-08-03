@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update loan</title>
+</head>
+<body>
+    <form action="/update-loan" method="POST">
+        <label>Loan ID:</label>
+        <input type="number" name="id" value="{{id}}" readonly><br>
+        <label>Borrower:</label>
+        <Select name="borrower_id" required>
+            <option value="{{o_borrower}}">{{o_borrower_name}}</option>
+            {%for borrower in borrowers%}
+            <option value="{{borrower['id']}}">{{borrower['name']}}</option>
+            {% endfor %}
+        </select><br>
+        <label>Book:</label>
+        <Select name="book_id" required>
+            <option value="{{o_book}}">{{o_book_name}}</option>
+            {%for book in books%}
+            <option value="{{book['book_id']}}">{{book['book_name']}}</option>
+            {% endfor %}
+        </Select><br>
+        <button>Update</button>
+    </form>
+</body>     
+</html>

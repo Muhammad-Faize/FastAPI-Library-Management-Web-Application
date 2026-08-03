@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Loan</title>
+</head>
+<body>
+    <form action="/add-loan" method="POST">
+        <select name="borrower_id" required>
+            <option value="">--SELECT Borrower--</option>
+            {% for borrower in borrowers %}
+            <option value="{{borrower.id}}">{{borrower.name}}</option>
+            {% endfor %}
+        </select>
+        <select name="book_id" required>
+            <option value="">--SELECT Book--</option>
+            {% for book in books %}
+            <option value="{{book.id}}">{{book.name}}</option>
+            {% endfor %}
+        </select>
+        <button>Add</button>
+    </form>
+</body>
+</html>

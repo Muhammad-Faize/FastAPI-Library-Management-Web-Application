@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Loans</title>
+</head>
+<body>
+    <h2>List of Loans</h2>
+    <table border="2">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Book Name</th>
+                <th>Borrower Name</th>
+                <th>Status</th>
+                <th>Date Borrowed</th>
+                <th>Date Returned</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for loan in loans%}
+            <tr>
+                <td>{{loan.id}}</td>
+                <td>{{loan.book_name}}</td>
+                <td>{{loan.borrower_name}}</td>
+                <td>{{loan.book_status}}</td>
+                <td>{{loan.date_borrowed}}</td>
+                <td>{{loan.date_returned}}</td>
+                <td><a href="/update-loan-page/{{loan.id}}" style="text-decoration:none; color:black;">✏️</a></td>
+                <td><a href="/delete-loan-page/{{loan.id}}" style="text-decoration:none; color:black;">🗑️</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <form action="/add-loan-page" method="GET">
+        <button>ADD</button>
+    </form>
+    <form action="/return-loan-page" method="GET">
+        <button>Return</button>
+    </form>
+</body>
+</html>
