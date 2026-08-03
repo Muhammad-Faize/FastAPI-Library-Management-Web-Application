@@ -212,7 +212,7 @@ def delete_book(id:int = Form(...)):
 @app.get("/update-loan-page/{id}")
 def update_loan_page(request:Request,id:int):
     o_book,o_borrower,o_book_name,o_borrower_name = Loans.Loan.get_detail_loan(id)
-    books,borrowers = Loans.Loan.get_items_for_loan()
+    books,borrowers = Loans.Loan.get_items_for_loan(id)
     return templates.TemplateResponse(  
         request,
         "/loans/update_loan.html",

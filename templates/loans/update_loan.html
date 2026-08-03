@@ -13,14 +13,18 @@
         <Select name="borrower_id" required>
             <option value="{{o_borrower}}">{{o_borrower_name}}</option>
             {%for borrower in borrowers%}
-            <option value="{{borrower['id']}}">{{borrower['name']}}</option>
+                {% if borrower['id'] != o_borrower %}
+                    <option value="{{borrower['id']}}">{{borrower['name']}}</option>
+                {% endif %}
             {% endfor %}
         </select><br>
         <label>Book:</label>
         <Select name="book_id" required>
             <option value="{{o_book}}">{{o_book_name}}</option>
             {%for book in books%}
-            <option value="{{book['book_id']}}">{{book['book_name']}}</option>
+                {% if book['book_id'] != o_book %}
+                    <option value="{{book['book_id']}}">{{book['book_name']}}</option>
+                {% endif %}
             {% endfor %}
         </Select><br>
         <button>Update</button>

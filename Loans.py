@@ -208,14 +208,26 @@ class Loan(BaseModel):
                 con.close()  
     
     @staticmethod
-    def get_items_for_loan():
+    def get_items_for_loan(id):
         con = None
         cur = None
         try:
             con,cur = Connection.connection()    
             cur.execute('''SELECT * FROM Borrowers''')
             borrowers = [dict(row) for row in cur.fetchall()]
-            cur.execute('''SELECT Books.id as book_id , Books.name as book_name FROM Loans FULL JOIN Books ON Loans.book_id = Books.id WHERE Loans.id IS NULL OR Loans.date_returned IS NOT NULL ;''')
+            cur.execute('''
+            SELECT 
+                b.id AS book_id,
+                b.name AS book_name
+            FROM Books b
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM Loans l
+                WHERE l.book_id = b.id
+                AND l.date_returned IS NULL
+                AND l.id != %s
+            );
+        ''', (id,))            
             books = [dict(row) for row in cur.fetchall()]
             return books,borrowers
         except Exception as error:
