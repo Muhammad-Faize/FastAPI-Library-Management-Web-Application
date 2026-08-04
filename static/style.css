@@ -105,6 +105,11 @@ button.secondary {
     color: var(--text);
     box-shadow: none;
 }
+button.third {
+    background: rgb(230, 233, 235);
+    color: var(--text);
+    box-shadow: none;
+}
 
 input, select {
     width: 100%;
@@ -261,3 +266,4 @@ tr:hover {
         padding: 10px;
     }
 }
+

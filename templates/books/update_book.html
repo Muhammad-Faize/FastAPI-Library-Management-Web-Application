@@ -8,9 +8,14 @@
 </head>
 <body>
     <form action="/update-book" method="POST">
-        <input type="number" name="id" value={{id}} readonly>
-        <input type="text" name="name" value="{{name}}" required>
+        <label for="id">Id:</label>
+        <input id='id' type="number" name="id" value={{id}} readonly>
+        <label for="name">Name:</label>
+        <input id='name' type="text" name="name" value="{{name}}" required>
         <button>Update</button>
+        <button type="submit" class='third' formaction="/get-book" formmethod="GET" formnovalidate>
+            Back
+        </button>
     </form>
 </body>
 </html>

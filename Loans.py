@@ -105,13 +105,13 @@ class Loan(BaseModel):
             con,cur = Connection.connection()
             cur.execute('''SELECT id FROM Loans where id = %s ''',(id,))
             if cur.fetchone() is None:
-                return {"detail":f"Loan with id {id} doesnt exists","status":"faliure"}
+                return {"detail":f"Loan id '{id}' doesnt exists","status":"faliure"}
             cur.execute('''SELECT 1 FROM Loans where date_returned IS Null AND id = %s ''',(id,))
             if cur.fetchone() is None:
-                return {"detail":f"Loan with id :{id} is not borrowed.",'status':'faliure'}
+                return {"detail":f"Loan id '{id}' is not borrowed.",'status':'faliure'}
             cur.execute('''UPDATE Loans SET date_Returned = CURRENT_TIMESTAMP where id = %s''',(id,))
             con.commit()
-            return {"detail":f"Loan has been returned",'status':'success'}
+            return {"detail":f"Loan returned successfully",'status':'success'}
         except Exception as error:
             return {'status':"faliure","detail":f"error at return_loan :{error}"}
 
@@ -147,7 +147,7 @@ class Loan(BaseModel):
             cur.execute('''SELECT book_id,borrower_id FROM Loans where id = %s''',(id,))
             row = cur.fetchone()
             if not row:
-                return "Error"
+                return {}
             book_id = row['book_id']
             borrower_id = row['borrower_id']
             cur.execute('''SELECT name FROM Books where id = %s''',(book_id,))

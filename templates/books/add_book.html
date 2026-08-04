@@ -8,14 +8,19 @@
 </head>
 <body>
     <form action="/add-book" method="POST">
-        <input type="text" placeholder="Enter book name" name="name" >
-        <select name="author_id" required>
+        <label for="name">Name:</label>
+        <input id='name' type="text" placeholder="Enter book name" name="name" >
+        <label for="author">Author:</label>
+        <select id='author' name="author_id" required>
             <option value="">--Select Author--</option>
             {% for book in books%}
             <option value="{{book.id}}">{{book.name}}</option>
             {% endfor %}
         </select>
         <button>Add</button>
+        <button type="submit"class='third' formaction="/get-book" formmethod="GET" formnovalidate>
+            Back
+        </button>
     </form>
 </body>
 </html>

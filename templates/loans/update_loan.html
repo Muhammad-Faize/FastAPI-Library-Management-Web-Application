@@ -8,10 +8,10 @@
 </head>
 <body>
     <form action="/update-loan" method="POST">
-        <label>Loan ID:</label>
-        <input type="number" name="id" value="{{id}}" readonly><br>
-        <label>Borrower:</label>
-        <Select name="borrower_id" required>
+        <label for='id'>Id:</label>
+        <input id='id' type="number" name="id" value="{{id}}" readonly><br>
+        <label for='borrower'>Borrower:</label>
+        <Select id='borrower' name="borrower_id" required>
             <option value="{{o_borrower}}">{{o_borrower_name}}</option>
             {%for borrower in borrowers%}
                 {% if borrower['id'] != o_borrower %}
@@ -19,8 +19,8 @@
                 {% endif %}
             {% endfor %}
         </select><br>
-        <label>Book:</label>
-        <Select name="book_id" required>
+        <label for='book'>Book:</label>
+        <Select id='book' name="book_id" required>
             <option value="{{o_book}}">{{o_book_name}}</option>
             {%for book in books%}
                 {% if book['book_id'] != o_book %}
@@ -29,6 +29,9 @@
             {% endfor %}
         </Select><br>
         <button>Update</button>
+        <button type="submit" class='third' formaction="/get-loan" formmethod="GET" formnovalidate>
+            Back
+        </button>
     </form>
 </body>     
 </html>

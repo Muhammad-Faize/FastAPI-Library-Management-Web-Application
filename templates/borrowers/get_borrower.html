@@ -14,22 +14,27 @@
                 <thead>
                     <tr>
                         <th>Id</th>
-                    <th>Name</th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for borrower in borrowers %}
-                <tr>
-                    <td>{{borrower.id}}</td>
-                    <td>{{borrower.name}}</td>
-                    <td><a class="icon-link" href="/update-borrower-page/{{borrower.id}}" aria-label="Edit borrower">✏️</a></td>
-                    <td><a class="icon-link danger" href="/delete-borrower-page/{{borrower.id}}" aria-label="Delete borrower">🗑️</a></td>
-                </tr>
-                {%endfor%}
-            </tbody>
-        </table>
+                        <th>Name</th>
+                        <th>Currently Borrowed</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for borrower in borrowers %}
+                    <tr>
+                        <td>{{borrower.id}}</td>
+                        <td>{{borrower.name}}</td>
+                        <td>{{borrower.currently_borrowed}}<br>
+                            {% if borrower.currently_borrowed >0 %}
+                             <a href="/get-borrower-details/{{borrower.id}}">View</a>
+                            {% endif%}
+                            </td>
+                        <td><a class="icon-link" href="/update-borrower-page/{{borrower.id}}" aria-label="Edit borrower">✏️</a> 
+                        <a class="icon-link danger" href="/delete-borrower-page/{{borrower.id}}" aria-label="Delete borrower">🗑️</a></td>
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
         </div>
         <div class="page-actions">
             <form action="/add-borrower-page" method="GET">

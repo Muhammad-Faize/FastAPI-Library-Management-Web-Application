@@ -8,9 +8,15 @@
 </head>
 <body>
     <form action="/update-author" method="POST" >
-        <input type="number" name="id" value={{id}} readonly><br>
-        <input type="text" placeholder="Enter updated author name" name="name" value = "{{name}}" required><br>
+        <label for="id">Id:</label>
+        <input id="id" type="number" name="id" value={{id}} readonly><br>
+        <label for="name">Name:</label>
+        <input id="name" type="text" placeholder="Enter updated author name" name="name" value = "{{name}}" required><br>
         <button>Update</button>
+
+        <button type="submit" class='third' formaction="/get-author" formmethod="GET" formnovalidate>
+            Back
+        </button>
     </form>
 </body>
-</html>
+</html> 

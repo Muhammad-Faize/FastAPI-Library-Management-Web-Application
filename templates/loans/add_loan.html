@@ -8,19 +8,24 @@
 </head>
 <body>
     <form action="/add-loan" method="POST">
-        <select name="borrower_id" required>
+        <label for="borrower">Borrower:</label>
+        <select id="borrower" name="borrower_id" required>
             <option value="">--SELECT Borrower--</option>
             {% for borrower in borrowers %}
             <option value="{{borrower.id}}">{{borrower.name}}</option>
             {% endfor %}
         </select>
-        <select name="book_id" required>
+        <label for="book">Book:</label>
+        <select id='book' name="book_id" required>
             <option value="">--SELECT Book--</option>
             {% for book in books %}
             <option value="{{book.id}}">{{book.name}}</option>
             {% endfor %}
         </select>
         <button>Add</button>
+        <button type="submit" class='third' formaction="/get-loan" formmethod="GET" formnovalidate>
+            Back
+        </button>
     </form>
 </body>
 </html>

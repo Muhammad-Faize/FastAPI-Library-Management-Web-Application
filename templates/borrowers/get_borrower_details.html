@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borrower Detail</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+</head>
+<body>
+    <div>
+        <label for="id">Id:</label>
+        <input id="id" type="text" value="{{borrower['id']}}" readonly>
+        <label for="name">Name:</label>
+        <input id="name" type="text" value="{{borrower['name']}}" readonly>
+    </div>
+    <h3>Borrowed Books:</h3>
+    <div class='table-responsive'>
+        <table>
+            <thead>
+                <th>Id</th>
+                <th>Name</th>
+            </thead>
+            <tbody>
+                {% for book in borrower_books%}
+                <tr>
+                    <td>{{book['book_id']}}</td>
+                    <td>{{book['book_name']}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div><br>
+    <form action="/get-borrower">
+        <button>Back</button>
+    </form>
+</body>
+</html>

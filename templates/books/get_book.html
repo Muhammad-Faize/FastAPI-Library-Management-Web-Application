@@ -17,7 +17,6 @@
                     <th>Name</th>
                     <th>Author Name</th>
                     <th></th>
-                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -26,8 +25,8 @@
                     <td>{{book.id}}</td>
                     <td>{{book.name}}</td>
                     <td>{{book.author_name}}</td>
-                    <td><a class="icon-link" href="/update-book-page/{{book.id}}" aria-label="Edit book">✏️</a></td>
-                    <td><a class="icon-link danger" href="/delete-book-page/{{book.id}}" aria-label="Delete book">🗑️</a></td>
+                    <td><a class="icon-link" href="/update-book-page/{{book.id}}" aria-label="Edit book">✏️</a>
+                    <a class="icon-link danger" href="/delete-book-page/{{book.id}}" aria-label="Delete book">🗑️</a></td>
                 </tr>
                 {% endfor%}
             </tbody>

@@ -16,7 +16,7 @@ class Book(BaseModel):
             con,cur = Connection.connection()
             cur.execute('''SELECT Id FROM Authors WHERE Id = %s''',(self.author_id,))
             if cur.fetchone() is None:
-                return {"detail":f"Author id {self.author_id} doesnt exists","status":"faliure"}
+                return {"detail":f"Author id '{self.author_id}' doesnt exists","status":"faliure"}
             cur.execute('''SELECT * FROM Books WHERE name ILIKE %s''',(self.name,))
             if cur.fetchone():
                 return {"detail":"Book already exists","status":"faliure"} 
@@ -92,7 +92,7 @@ class Book(BaseModel):
             con,cur = Connection.connection()
             cur.execute('''SELECT * FROM Books WHERE id != %s AND name ILIKE %s''',(id,name))
             if cur.fetchone():
-                return {"detail":f'{name} already exists',"status":"faliure"}
+                return {"detail":f"'{name}' already exists","status":"faliure"}
             cur.execute('''UPDATE Books SET name = %s WHERE id = %s ''',(name,id))
             con.commit()
             return {"detail":"Book updated successfully","status":"success"}

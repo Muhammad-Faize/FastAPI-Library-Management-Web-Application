@@ -8,8 +8,12 @@
 </head>
 <body>
     <Form action="/delete-borrower" method="POST">
-        <input type="number" value={{id}} name="id" readonly>
-        <button>Press to delete.</button>
+        <label for="id">Id:</label>
+        <input id='id' type="number" value={{id}} name="id" readonly>
+        <button>Delete.</button>
+        <button type="submit" class='third' formaction="/get-borrower" formmethod="GET" formnovalidate>
+            Back
+        </button>
     </Form>
 </body>
 </html>

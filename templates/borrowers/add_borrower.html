@@ -8,8 +8,12 @@
 </head>
 <body>
     <form action="/add-borrower" method="POST">
-        <input type="text" name="name" placeholder="Enter Borrower Name" required>
+        <label for="name">Name</label>
+        <input id='name' type="text" name="name" placeholder="Enter Borrower Name" required>
         <button>Add</button>
+        <button type="submit" class='third' formaction="/get-borrower" formmethod="GET" formnovalidate>
+            Back
+        </button>
     </form>
 </body>
 </html>

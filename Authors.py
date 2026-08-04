@@ -15,7 +15,7 @@ class Author(BaseModel):
         try:
             con,cur = Connection.connection()
             if (self.name).isdigit():
-                return {"detail":"Name cannot be number","status":"faliure"}
+                return {"detail":"Name cannot be a number","status":"faliure"}
             cur.execute('''SELECT name FROM Authors where name ILIKE %s''',(self.name,))
             author = cur.fetchall()
             if author:
@@ -74,10 +74,10 @@ class Author(BaseModel):
             con,cur = Connection.connection()
             cur.execute('DELETE FROM Authors WHERE id = %s',(id,))
             con.commit()
-            return {"detail":'Author has been deleted',"status":"success"}
+            return {"detail":'Author deleted successfully',"status":"success"}
         except Exception as error:
             if 'violates foreign key constraint' in str(error):
-                return {'status':"faliure","detail":f"Author id {id} is issued with a book, Hence cant be deleted"}    
+                return {'status':"faliure","detail":f"Author id '{id}' is issued with a book, Hence cant be deleted"}    
             return {'status':"faliure","detail":f"error at delete_author :{error}"}    
         
         finally:
@@ -94,13 +94,13 @@ class Author(BaseModel):
             con,cur = Connection.connection()
             cur.execute('''SELECT * FROM Authors WHERE id != %s AND NAME ILIKE %s ''',(id,name))
             if cur.fetchone():
-                return {"detail":f"Authors with name {name} already exists","status":"faliure"}
+                return {"detail":f"Author name '{name}' already exists","status":"faliure"}
             cur.execute('''SELECT * FROM Books WHERE author_id = %s ''',(id,))
             if cur.fetchone():
-                return {'status':"faliure","detail":f"Author id {id} is issued with a book, Hence cant be updated"} 
+                return {'status':"faliure","detail":f"Author id '{id}' is issued with a book, Hence cant be updated"} 
             cur.execute('''UPDATE Authors set name = %s where id = %s ''',(name,id))
             con.commit()
-            return {"detail":'Author has been updated',"status":"success"}
+            return {"detail":'Author updated successfully',"status":"success"}
 
         except Exception as error:
             return {'status':"faliure","detail":f"error at update_author :{error}"}

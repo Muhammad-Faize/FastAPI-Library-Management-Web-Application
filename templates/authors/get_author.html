@@ -16,7 +16,6 @@
                         <th>Id</th>
                         <th>Name</th>
                     <th></th>
-                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -24,8 +23,8 @@
             <tr>
                 <td>{{ author.id }}</td>
                 <td>{{ author.name }}</td>
-                <td><a class="icon-link" href="/update-author-page/{{author.id}}" aria-label="Edit author">✏️</a></td>
-                <td><a class="icon-link danger" href="/delete-author-page/{{author.id}}" aria-label="Delete author">🗑️</a></td>
+                <td><a class="icon-link" href="/update-author-page/{{author.id}}" aria-label="Edit author">✏️</a>
+                <a class="icon-link danger" href="/delete-author-page/{{author.id}}" aria-label="Delete author">🗑️</a></td>
             </tr>
             {% endfor %}
             </tbody>
