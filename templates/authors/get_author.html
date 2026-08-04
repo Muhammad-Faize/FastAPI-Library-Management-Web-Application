@@ -4,16 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All_Authors</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
 </head>
 <body>
     <div class="page-card">
         <h2>Lists of Authors</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Name</th>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -29,6 +30,7 @@
             {% endfor %}
             </tbody>
         </table>
+        </div>
         <div class="page-actions">
             <form action="/add-author-page" method="GET">
                 <button type="submit">ADD</button>

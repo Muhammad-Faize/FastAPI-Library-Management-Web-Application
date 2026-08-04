@@ -1,6 +1,5 @@
 import Connection
 from pydantic import Field,BaseModel
-from fastapi import HTTPException
 
 class Loan(BaseModel):
     borrower_id : int = Field(gt=0,description='Add the borrower id.')
@@ -13,12 +12,9 @@ class Loan(BaseModel):
             con,cur = Connection.connection()
             cur.execute('''INSERT INTO Loans (borrower_id,book_id) VALUES (%s,%s) ''',(self.borrower_id,self.book_id))
             con.commit()
-            return 'Loan issued'
+            return {"detail":f"Loan issued","status":"success"}
         except Exception as error:
-            raise HTTPException(
-                status_code=500,
-                detail = f"Error occured at add_loans: {error}"
-            )
+            return {'status':"faliure","detail":f"error at add_loan :{error}"}
 
         finally:
             if cur:
@@ -62,16 +58,13 @@ class Loan(BaseModel):
                     loan['book_status'] = 'Available'
 
                 elif loan['date_returned'] is None:
-                    loan['book_status'] = 'Not Available'
+                    loan['book_status'] = 'Borrowed'
 
                 else:
                     loan['book_status'] = 'Available'
             return loans
         except Exception as error:
-            raise HTTPException(
-                status_code=500,
-                detail = f"Error occured at get_loans: {error}"
-            )
+            return {'status':"faliure","detail":f"error at get_loan :{error}"}
 
         finally:
             if cur:
@@ -96,10 +89,7 @@ class Loan(BaseModel):
             books = [dict(row) for row in cur.fetchall()]
             return books
         except Exception as error:
-            raise HTTPException(
-                status_code=500,
-                detail = f"Error occured at get_loans: {error}"
-            )
+            return {'status':"faliure","detail":f"error at get_unborrowed_book :{error}"}
 
         finally:
             if cur:
@@ -115,20 +105,15 @@ class Loan(BaseModel):
             con,cur = Connection.connection()
             cur.execute('''SELECT id FROM Loans where id = %s ''',(id,))
             if cur.fetchone() is None:
-                return f"Loan with id {id} doesnt exists"
+                return {"detail":f"Loan with id {id} doesnt exists","status":"faliure"}
             cur.execute('''SELECT 1 FROM Loans where date_returned IS Null AND id = %s ''',(id,))
             if cur.fetchone() is None:
-                return f"Loan with id :{id} is not borrowed."
+                return {"detail":f"Loan with id :{id} is not borrowed.",'status':'faliure'}
             cur.execute('''UPDATE Loans SET date_Returned = CURRENT_TIMESTAMP where id = %s''',(id,))
             con.commit()
-            return 'Loan has been returned'
-        except HTTPException:
-            raise
+            return {"detail":f"Loan has been returned",'status':'success'}
         except Exception as error:
-            raise HTTPException(
-                status_code=500,
-                detail=f"Error occured at return_loan : {error}"
-            )
+            return {'status':"faliure","detail":f"error at return_loan :{error}"}
 
         finally:
             if cur:
@@ -144,14 +129,9 @@ class Loan(BaseModel):
             con,cur = Connection.connection()
             cur.execute('''DELETE FROM Loans WHERE id = %s ''',(id,))
             con.commit()
-            return "Loan has been deleted"
-        except HTTPException:
-            raise
+            return {"detail":f"Loan deleted successfully",'status':'success'}
         except Exception as error:
-            raise HTTPException(
-                status_code=500,
-                detail=f"Error occured at delete_loan : {error}"
-            )
+            return {'status':"faliure","detail":f"error at delete_loan :{error}"}
         finally:
             if cur:
                 cur.close()
@@ -176,10 +156,7 @@ class Loan(BaseModel):
             borrower_name = cur.fetchone()
             return book_id,borrower_id,book_name['name'],borrower_name['name']
         except Exception as error:
-            raise HTTPException(
-                status_code=500,
-                detail = f"Error occured at get_detail_loan : {error}"
-            )
+            return {'status':"faliure","detail":f"error at get_detail_loan :{error}"}
 
         finally:
             if cur:
@@ -194,12 +171,9 @@ class Loan(BaseModel):
             con,cur = Connection.connection()    
             cur.execute('''UPDATE Loans SET borrower_id = %s , book_id = %s WHERE id = %s''',(borrower_id,book_id,id))
             con.commit()        
-            return "Loan updated succesffuly"
+            return {"detail":f"Loan updated successfully",'status':'success'}
         except Exception as error:
-            raise HTTPException(
-                status_code=500,
-                detail = f"Error occured at update_loan : {error}"
-            )
+            return {'status':"faliure","detail":f"error at update_loan :{error}"}
 
         finally:
             if cur:
@@ -231,10 +205,7 @@ class Loan(BaseModel):
             books = [dict(row) for row in cur.fetchall()]
             return books,borrowers
         except Exception as error:
-            raise HTTPException(
-                status_code=500,
-                detail = f"Error occured at get_items_for_loan : {error}"
-            )
+            return {'status':"faliure","detail":f"error at get_items_for_loan :{error}"}
 
         finally:
             if cur:

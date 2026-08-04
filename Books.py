@@ -1,6 +1,5 @@
 import Connection
 from pydantic import Field,BaseModel,field_validator
-from fastapi import HTTPException
 
 class Book(BaseModel):
     name : str = Field(min_length=2,max_length=120,description='Add book name.')
@@ -17,19 +16,16 @@ class Book(BaseModel):
             con,cur = Connection.connection()
             cur.execute('''SELECT Id FROM Authors WHERE Id = %s''',(self.author_id,))
             if cur.fetchone() is None:
-                return f"Author with id {self.author_id} doesnt exists"
+                return {"detail":f"Author id {self.author_id} doesnt exists","status":"faliure"}
             cur.execute('''SELECT * FROM Books WHERE name ILIKE %s''',(self.name,))
             if cur.fetchone():
-               return f"Book already exists" 
+                return {"detail":"Book already exists","status":"faliure"} 
             cur.execute('''INSERT INTO Books (Name,Author_Id) VALUES (%s,%s)''',(self.name,self.author_id))
             con.commit()
-            return 'Book added successfully'
+            return {"detail":"Book added successfully","status":"success"}
 
         except Exception as error:
-            raise HTTPException(
-                status_code=500,
-                detail = f"Error occured at add_book : {error}"
-            )
+            return {'status':"faliure","detail":f"error at add_book :{error}"}
 
         finally:
             if cur:
@@ -46,18 +42,13 @@ class Book(BaseModel):
             books = [dict(row) for row in cur.fetchall()]
             return books
         except Exception as error:
-            raise HTTPException(
-                status_code=500,
-                detail = f"Error occured at get_books : {error}"
-            )
+            return {'status':"faliure","detail":f"error at get_book :{error}"}
 
         finally:
             if cur:
                 cur.close()
             if con:
                 con.close()  
-    
-    @staticmethod
     @staticmethod
     def delete_book(id):  
         con = None
@@ -66,12 +57,9 @@ class Book(BaseModel):
             con,cur = Connection.connection()
             cur.execute('''DELETE FROM Books where id = %s ''',(id,))
             con.commit()
-            return "Book deleted successfully"
+            return {"detail":"Book deleted successfully","status":"success"}
         except Exception as error:
-            raise HTTPException(
-                status_code=500,
-                detail = f"Error occured at delete_books : {error}"
-            )
+            return {'status':"faliure","detail":f"error at delete_book :{error}"}
 
         finally:
             if cur:
@@ -88,10 +76,7 @@ class Book(BaseModel):
             name = cur.fetchone()
             return name['name']
         except Exception as error:
-            raise HTTPException(
-                status_code=500,
-                detail = f"Error occured at get_book_by_id : {error}"
-            )
+            return {'status':"faliure","detail":f"error at get_book_by_id :{error}"}
 
         finally:
             if cur:
@@ -107,15 +92,12 @@ class Book(BaseModel):
             con,cur = Connection.connection()
             cur.execute('''SELECT * FROM Books WHERE id != %s AND name ILIKE %s''',(id,name))
             if cur.fetchone():
-                return f'{name} already exists'
+                return {"detail":f'{name} already exists',"status":"faliure"}
             cur.execute('''UPDATE Books SET name = %s WHERE id = %s ''',(name,id))
             con.commit()
-            return 'Book updated succesfully'
+            return {"detail":"Book updated successfully","status":"success"}
         except Exception as error:
-            raise HTTPException(
-                status_code=500,
-                detail = f"Error occured at update_book : {error}"
-            )
+            return {'status':"faliure","detail":f"error at update_book :{error}"}
 
         finally:
             if cur:

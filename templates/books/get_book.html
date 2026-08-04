@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Get Books</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
 </head>
 <body>
     <div class="page-card">
         <h2>List of Books</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
                     <th>Name</th>
                     <th>Author Name</th>
                     <th></th>
@@ -31,6 +32,7 @@
                 {% endfor%}
             </tbody>
         </table>
+        </div>
         <div class="page-actions">
             <form action="/add-book-page" method="GET">
                 <button type="submit">ADD</button>

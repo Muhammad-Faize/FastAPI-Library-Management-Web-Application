@@ -7,7 +7,7 @@ import Authors,Books,Borrowers,Loans,Create_table
 app = FastAPI() 
 Create_table.create_table()
 
-app.mount("/static", StaticFiles(directory="."), name="static")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
 
@@ -297,3 +297,4 @@ def update_loan(request:Request,id:int=Form(...),book_id:int = Form(...),borrowe
         {"request":request,"msg":msg,"return_path":return_path}
     ) 
 #-------------------------------------------------------------
+

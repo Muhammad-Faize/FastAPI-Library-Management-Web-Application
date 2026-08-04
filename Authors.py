@@ -1,17 +1,12 @@
 import Connection
 from pydantic import Field,BaseModel,field_validator
-from fastapi import HTTPException
-import psycopg2
+
 class Author(BaseModel):
     name : str = Field(min_length=2,max_length=120,description='Add author name')
     
     @field_validator('name')
     def clean_name(cls,name):
         name = name.strip().title()
-        if name.isdigit():
-            raise HTTPException(
-                status_code=409,
-                detail="The entered value cannot contain numbers")
         return name
 
     def add_author(self):
@@ -19,20 +14,17 @@ class Author(BaseModel):
         cur = None
         try:
             con,cur = Connection.connection()
+            if (self.name).isdigit():
+                return {"detail":"Name cannot be number","status":"faliure"}
             cur.execute('''SELECT name FROM Authors where name ILIKE %s''',(self.name,))
             author = cur.fetchall()
             if author:
-                return f"author name '{self.name}' already exists."
+                return {'detail':f"author name '{self.name}' already exists.","status":"faliure"}
             cur.execute('''INSERT INTO Authors (Name) VALUES (%s)''',(self.name,))
             con.commit()
-            return "Author added sucessfully"
-        except HTTPException:
-            raise
+            return {"detail":"Author added sucessfully","status":"success"}
         except Exception as error:
-            raise HTTPException(
-                status_code=500,
-                detail= f"Error occured at add_author : {error}"
-                )
+            return {'status':"faliure","detail":f"error at add_author :{error}"}
         finally:
             if cur:
                 cur.close()
@@ -49,11 +41,7 @@ class Author(BaseModel):
             authors = [dict(row) for row in cur.fetchall()]
             return authors
         except Exception as error:
-            raise HTTPException(
-                status_code=500,
-                detail= f"Error occured at get_author : {error}"
-                )
-        
+            return {'status':"faliure","detail":f"error at get_author :{error}"}    
         finally:
             if cur:
                 cur.close()
@@ -70,10 +58,7 @@ class Author(BaseModel):
             return name['name']
        
         except Exception as error:
-            raise HTTPException(
-                status_code=500,
-                detail= f"Error occured at get_author_by_id : {error}"
-                )
+            return {'status':"faliure","detail":f"error at add_author_by_id :{error}"}
         
         finally:
             if cur:
@@ -89,12 +74,11 @@ class Author(BaseModel):
             con,cur = Connection.connection()
             cur.execute('DELETE FROM Authors WHERE id = %s',(id,))
             con.commit()
-            return 'Author has been deleted'
+            return {"detail":'Author has been deleted',"status":"success"}
         except Exception as error:
-            raise HTTPException(
-                status_code=500,
-                detail= f"Error occured at delete_author : {error}"
-                )
+            if 'violates foreign key constraint' in str(error):
+                return {'status':"faliure","detail":f"Author id {id} is issued with a book, Hence cant be deleted"}    
+            return {'status':"faliure","detail":f"error at delete_author :{error}"}    
         
         finally:
             if cur:
@@ -110,16 +94,16 @@ class Author(BaseModel):
             con,cur = Connection.connection()
             cur.execute('''SELECT * FROM Authors WHERE id != %s AND NAME ILIKE %s ''',(id,name))
             if cur.fetchone():
-                return f"Authors with name {name} already exists"
+                return {"detail":f"Authors with name {name} already exists","status":"faliure"}
+            cur.execute('''SELECT * FROM Books WHERE author_id = %s ''',(id,))
+            if cur.fetchone():
+                return {'status':"faliure","detail":f"Author id {id} is issued with a book, Hence cant be updated"} 
             cur.execute('''UPDATE Authors set name = %s where id = %s ''',(name,id))
             con.commit()
-            return 'Author has been updated'
+            return {"detail":'Author has been updated',"status":"success"}
 
         except Exception as error:
-            raise HTTPException(
-                status_code=500,
-                detail= f"Error occured at update_author : {error}"
-                )
+            return {'status':"faliure","detail":f"error at update_author :{error}"}
         
         finally:
             if cur:

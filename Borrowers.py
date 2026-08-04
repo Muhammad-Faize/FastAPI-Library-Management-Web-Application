@@ -1,6 +1,5 @@
 import Connection
 from pydantic import Field,BaseModel,field_validator
-from fastapi import HTTPException
 
 class Borrower(BaseModel):
     name : str = Field(min_length=2,max_length=120,description='Add borrower name.')
@@ -8,27 +7,24 @@ class Borrower(BaseModel):
     @field_validator('name')
     def clean_name(cls,name):
         name = name.strip().title()
-        if name.isdigit():
-            raise ValueError("The entered value cannot contain numbers")
         return name
     def add_borrower(self):
         con = None
         cur = None
         try:
             con,cur = Connection.connection()
+            if (self.name).isdigit():
+                return {"detail":"Name cannot be number","status":"faliure"}
             cur.execute('''SELECT * FROM Borrowers''')
             borrowers = [dict(row) for row in cur.fetchall()]
             for borrower in borrowers:
                 if borrower['name'] == self.name:
-                    return f"borrower with name '{self.name}' already exists"
+                    return {"detail":f"borrower with name '{self.name}' already exists","status":"faliure"}
             cur.execute('''INSERT INTO Borrowers (Name) VALUES (%s)''',(self.name,))
             con.commit()
-            return 'Borrower added successfully'
+            return {"detail":f"Borrower added successfully","status":"success"}
         except Exception as error:
-            raise HTTPException(
-                status_code=500,
-                detail = f"Error occured at add_borrower : {error}"
-            )
+            return {'status':"faliure","detail":f"error at add_borrower :{error}"}
         finally:
             if cur:
                 cur.close()
@@ -44,10 +40,7 @@ class Borrower(BaseModel):
             borrowers = [dict(row) for row in cur.fetchall()]
             return borrowers
         except Exception as error:
-            raise HTTPException(
-                status_code=500,
-                detail = f"Error occured at get_borrower : {error}"
-            )
+            return {'status':"faliure","detail":f"error at get_borrower :{error}"}
         finally:
             if cur:
                 cur.close()
@@ -63,10 +56,7 @@ class Borrower(BaseModel):
             name = cur.fetchone()
             return name['name']
         except Exception as error:
-            raise HTTPException(
-                status_code=500,
-                detail = f"Error occured at get_borrower_by_id : {error}"
-            )
+            return {'status':"faliure","detail":f"error at get_borrower_by_id :{error}"}
         finally:
             if cur:
                 cur.close()
@@ -81,12 +71,11 @@ class Borrower(BaseModel):
             con,cur = Connection.connection()
             cur.execute('DELETE FROM Borrowers WHERE id = %s',(id,))
             con.commit()
-            return 'Borrower has been deleted'
+            return {"detail":f"Borrower deleted successfully","status":"success"}
         except Exception as error:
-            raise HTTPException(
-                status_code=500,
-                detail = f"Error occured at delete_borrower : {error}"
-            )
+            if 'violates foreign key constraint' in str(error):
+                return {'status':"faliure","detail":f"Borrower id {id} is issued with a loan, Hence cant be deleted"} 
+            return {'status':"faliure","detail":f"error at delete_borrower :{error}"}
         finally:
             if cur:
                 cur.close()
@@ -101,15 +90,15 @@ class Borrower(BaseModel):
             con,cur = Connection.connection()
             cur.execute('''SELECT * FROM Borrowers WHERE id != %s AND NAME ILIKE %s ''',(id,name))
             if cur.fetchone():
-                return f"Borrower with name {name} already exists"
+                return {"detail":f"Borrower with name {name} already exists","status":"faliure"}
+            cur.execute('''SELECT * FROM Loans WHERE borrower_id = %s ''',(id,))
+            if cur.fetchone():
+                return {'status':"faliure","detail":f"Borrower id {id} is issued with a loan, Hence cant be updated"} 
             cur.execute('''UPDATE Borrowers set name = %s where id = %s ''',(name,id))
             con.commit()
-            return 'Borrowoer has been updated'
+            return {"detail":f"Borrower has been updated","status":"success"}
         except Exception as error:
-            raise HTTPException(
-                status_code=500,
-                detail = f"Error occured at update_borrower : {error}"
-            )
+            return {'status':"faliure","detail":f"error at update_borrower :{error}"}
         finally:
             if cur:
                 cur.close()

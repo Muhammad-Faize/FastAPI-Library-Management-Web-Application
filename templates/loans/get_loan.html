@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Get Loans</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
 </head>
 <body>
     <div class="page-card">
         <h2>List of Loans</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
                     <th>Book Name</th>
                     <th>Borrower Name</th>
                     <th>Status</th>
@@ -29,7 +30,7 @@
                     <td>{{loan.id}}</td>
                     <td>{{loan.book_name}}</td>
                     <td>{{loan.borrower_name}}</td>
-                    <td>{{loan.book_status}}</td>
+                    <td class="status {{ loan.book_status | lower }}">{{loan.book_status}}</td>
                     <td>{{loan.date_borrowed}}</td>
                     <td>{{loan.date_returned}}</td>
                     <td><a class="icon-link" href="/update-loan-page/{{loan.id}}" aria-label="Edit loan">✏️</a></td>
@@ -39,6 +40,7 @@
                 {% endfor %}
             </tbody>
         </table>
+        </div>
         <div class="page-actions">
             <form action="/add-loan-page" method="GET">
                 <button type="submit">ADD</button>

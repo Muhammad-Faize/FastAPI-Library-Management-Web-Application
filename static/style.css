@@ -18,11 +18,12 @@ body {
     background: linear-gradient(135deg, #f6f9ff 0%, var(--bg) 100%);
     color: var(--text);
     margin: 0;
-    padding: 24px;
+    padding: 16px;
     min-height: 100vh;
 }
 
 .page-card {
+    width: 100%;
     max-width: 1100px;
     margin: 0 auto;
     background: var(--card);
@@ -150,23 +151,39 @@ a {
     background: #fee2e2;
 }
 
-.message-box {
+.message-box-success {
     padding: 16px 18px;
     border-radius: 12px;
-    background: #eff6ff;
+    background: #d4edda;
     border: 1px solid #bfdbfe;
-    color: #1e3a8a;
+    color: 155724;
     margin-bottom: 16px;
 }
 
-table {
+.message-box-faliure {
+    padding: 16px 18px;
+    border-radius: 12px;
+    background: #f8d7da;
+    border: 1px solid #bfdbfe;
+    color: 721c24;
+    margin-bottom: 16px;
+}
+
+.table-responsive {
     width: 100%;
-    border-collapse: collapse;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     margin: 18px 0 24px;
     background: white;
-    overflow: hidden;
     border-radius: 12px;
     border: 2px solid var(--border);
+}
+
+.table-responsive table {
+    width: 100%;
+    min-width: 100%;
+    border-collapse: collapse;
+    background: transparent;
 }
 
 th {
@@ -184,4 +201,63 @@ td {
 
 tr:hover {
     background: #f8fbff;
+}
+
+/* Base badge */
+.status {
+    padding: 5px 12px;
+    border-radius: 20px;   /* makes it round */
+    font-size: 12px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+/* Available (green pill) */
+.status.available {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+/* Borrowed (red pill) */
+.status.borrowed {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+@media (max-width: 640px) {
+    body {
+        padding: 12px;
+    }
+
+    .page-card {
+        padding: 20px;
+        border-radius: 16px;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+    }
+
+    .feature-card {
+        padding: 16px;
+    }
+
+    .page-actions {
+        gap: 10px;
+    }
+
+    button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    input,
+    select {
+        font-size: 0.95rem;
+    }
+
+    th,
+    td {
+        padding: 10px;
+    }
 }
