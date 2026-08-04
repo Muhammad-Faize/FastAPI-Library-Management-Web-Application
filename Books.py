@@ -103,5 +103,38 @@ class Book(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close()           
-               
+                con.close()      
+    @staticmethod
+    def get_book_advanced(user_inp):
+        con = None
+        cur = None
+        try:
+            con, cur = Connection.connection()
+            cur.execute('''
+                SELECT Authors.Name AS author_name,
+                    Books.Name AS book_name
+                FROM Authors
+                INNER JOIN Books ON Authors.Id = Books.Author_Id
+                WHERE Books.Name ILIKE %s
+            ''', (user_inp,))
+
+            data = cur.fetchone()
+            if data:
+                return {"data": dict(data), "status": "success"}
+
+            return {"data": {}, "status": "failure"}
+        except Exception as error:
+            return {
+            "data": {},
+            "status": "failure",
+            "detail": str(error)
+            } 
+
+        finally:
+            if cur:
+                cur.close()
+            if con:
+                con.close()      
+
+# a = Book.get_book_advanced('english')
+# print(a)

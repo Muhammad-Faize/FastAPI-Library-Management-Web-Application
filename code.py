@@ -305,3 +305,15 @@ def update_loan(request:Request,id:int=Form(...),book_id:int = Form(...),borrowe
         {"request":request,"msg":msg,"return_path":return_path}
     ) 
 #-------------------------------------------------------------
+@app.get('/get-book-advance')
+def get_book_advanced(request: Request, search: str):  
+    result = Books.Book.get_book_advanced(search)
+    return templates.TemplateResponse(
+        request,
+        "books/get_book_advance.html",
+        {
+            "request": request,
+            "book": result["data"],
+            "status": result["status"]
+        }
+    )
