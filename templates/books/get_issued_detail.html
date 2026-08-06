@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issued Detail</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+</head>
+<body>
+    <div class="page-card">
+        <h1>Issued Details</h1>
+        <p class="subtitle">Detailed view of issued books.</p>
+        <label for="name">Book Name</label>
+        <input id="name" type="text" value="{{data[0]['book_name']}}" readonly>
+
+        <h3 style="margin-top:18px">Borrowers</h3>
+        <div class='table-responsive'>
+            <table>
+                <thead>
+                    <th>Borrower</th>
+                    <th>Issued copies</th>
+                </thead>
+                <tbody>
+                    {% for d in data%}
+                    <tr>
+                        <td>{{d['borrower_name']}}</td>
+                        <td>{{d['issued_books']}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="page-actions">
+            <a href="/get-book" class="third" style="display:inline-block;padding:10px 16px;border-radius:999px;background:rgb(230,233,235);color:var(--text);text-decoration:none;">Back</a>
+        </div>
+    </div>
+</body>
+</html>

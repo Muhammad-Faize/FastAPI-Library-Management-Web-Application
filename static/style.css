@@ -218,13 +218,13 @@ tr:hover {
 }
 
 /* Available (green pill) */
-.status.available {
+.status.available,.status.active {
     background-color: #d4edda;
     color: #155724;
 }
 
 /* Borrowed (red pill) */
-.status.borrowed {
+.status.borrowed,.status.returned {
     background-color: #f8d7da;
     color: #721c24;
 }

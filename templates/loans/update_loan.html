@@ -8,8 +8,7 @@
 </head>
 <body>
     <form action="/update-loan" method="POST">
-        <label for='id'>Id:</label>
-        <input id='id' type="number" name="id" value="{{id}}" readonly><br>
+        <input id='id' type="hidden" name="id" value="{{id}}" readonly>
         <label for='borrower'>Borrower:</label>
         <Select id='borrower' name="borrower_id" required>
             <option value="{{o_borrower}}">{{o_borrower_name}}</option>
@@ -28,6 +27,8 @@
                 {% endif %}
             {% endfor %}
         </Select><br>
+        <label for='issued_books'>Issued Books:</label>
+        <input type='number' value='{{issued_books}}' name='issued_books' id='issued_books'></input>
         <button>Update</button>
         <button type="submit" class='third' formaction="/get-loan" formmethod="GET" formnovalidate>
             Back

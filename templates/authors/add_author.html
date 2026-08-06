@@ -7,14 +7,19 @@
     <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
 </head>
 <body>
-    <form action="/add-author" method="POST">
-        <label for="name">Name:</label>
-        <input id="name" type="text" name="name" placeholder="Author Name" required>
-        <button type="submit">Add</button>
+    <div class="page-card">
+        <h1>Add Author</h1>
+        <p class="subtitle">Create a new author record for the library.</p>
 
-        <button type="submit" class='third' formaction="/get-author" formmethod="GET" formnovalidate>
-            Back
-        </button>
-    </form>
+        <form action="/add-author" method="POST">
+            <label for="name">Name</label>
+            <input id="name" type="text" name="name" placeholder="Author Name" required>
+
+            <div class="page-actions">
+                <button type="submit">Add Author</button>
+                <button type="submit" class="third" formaction="/get-author" formmethod="GET" formnovalidate>Back</button>
+            </div>
+        </form>
+    </div>
 </body>
 </html>

@@ -13,16 +13,14 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Id</th>
                         <th>Name</th>
-                        <th>Currently Borrowed</th>
+                        <th>Current Loans</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for borrower in borrowers %}
                     <tr>
-                        <td>{{borrower.id}}</td>
                         <td>{{borrower.name}}</td>
                         <td>{{borrower.currently_borrowed}}<br>
                             {% if borrower.currently_borrowed >0 %}
@@ -30,12 +28,17 @@
                             {% endif%}
                             </td>
                         <td><a class="icon-link" href="/update-borrower-page/{{borrower.id}}" aria-label="Edit borrower">✏️</a> 
-                        <a class="icon-link danger" href="/delete-borrower-page/{{borrower.id}}" aria-label="Delete borrower">🗑️</a></td>
+                        <a class="icon-link danger" href="/delete-borrower/{{borrower.id}}" onclick='alert("Are you sure you want to delete")' aria-label="Delete borrower">🗑️</a></td>
                     </tr>
                     {%endfor%}
                 </tbody>
             </table>
         </div>
+        <form action="/get-borrower-search">
+            <label for="name">Search Borrower:</label>
+            <input type="text" name="search" id="name" required placeholder='Search borrower....'>
+            <button style="margin-left: auto; display: block;">search</button>
+        </form>
         <div class="page-actions">
             <form action="/add-borrower-page" method="GET">
                 <button type="submit">Add</button>

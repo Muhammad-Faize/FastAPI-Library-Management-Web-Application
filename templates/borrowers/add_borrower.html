@@ -7,13 +7,19 @@
     <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
 </head>
 <body>
-    <form action="/add-borrower" method="POST">
-        <label for="name">Name</label>
-        <input id='name' type="text" name="name" placeholder="Enter Borrower Name" required>
-        <button>Add</button>
-        <button type="submit" class='third' formaction="/get-borrower" formmethod="GET" formnovalidate>
-            Back
-        </button>
-    </form>
+    <div class="page-card">
+        <h1>Add Borrower</h1>
+        <p class="subtitle">Register a person who can borrow books from the library.</p>
+
+        <form action="/add-borrower" method="POST">
+            <label for="name">Name</label>
+            <input id='name' type="text" name="name" placeholder="Enter Borrower Name" required>
+
+            <div class="page-actions">
+                <button type="submit">Add Borrower</button>
+                <button type="submit" class='third' formaction="/get-borrower" formmethod="GET" formnovalidate>Back</button>
+            </div>
+        </form>
+    </div>
 </body>
 </html>

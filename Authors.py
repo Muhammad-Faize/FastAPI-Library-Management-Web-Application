@@ -14,12 +14,11 @@ class Author(BaseModel):
         cur = None
         try:
             con,cur = Connection.connection()
+            cur.execute('''SELECT * FROM Authors WHERE name = %s ''',(self.name,))
+            if cur.fetchone():
+                return {"detail":"Author already exists","status":"faliure"}
             if (self.name).isdigit():
                 return {"detail":"Name cannot be a number","status":"faliure"}
-            cur.execute('''SELECT name FROM Authors where name ILIKE %s''',(self.name,))
-            author = cur.fetchall()
-            if author:
-                return {'detail':f"author name '{self.name}' already exists.","status":"faliure"}
             cur.execute('''INSERT INTO Authors (Name) VALUES (%s)''',(self.name,))
             con.commit()
             return {"detail":"Author added sucessfully","status":"success"}
@@ -47,6 +46,27 @@ class Author(BaseModel):
                 cur.close()
             if con:
                 con.close() 
+                
+    @staticmethod
+    def get_auhtor_by_name(author_name):
+        con = None
+        cur = None
+        try:
+            con,cur = Connection.connection()
+            cur.execute("Select id FROM Authors where name = %s;",(author_name.title(),))
+            id = cur.fetchone()
+            if id:
+                return id['id']
+            return None
+        except Exception as error:
+            return {'status':"faliure","detail":f"error at add_author_by_name :{error}"}
+        
+        finally:
+            if cur:
+                cur.close()
+            if con:
+                con.close() 
+                
     @staticmethod
     def get_auhtor_by_id(id):
         con = None
@@ -111,3 +131,24 @@ class Author(BaseModel):
             if con:
                 con.close()     
 
+    @staticmethod
+    def search_author(search):
+        con = None
+        cur = None
+        try:
+            search = search.title()
+            con,cur = Connection.connection()
+            cur.execute('''SELECT * from Authors where name Ilike %s''',(f"%{search}%",))
+            row = cur.fetchall()
+            if row:
+                return [dict(data) for data in row]
+            else:
+                return None
+        except Exception as error:
+            return {'status':"faliure","detail":f"error at search_author :{error}"}
+        
+        finally:
+            if cur:
+                cur.close()
+            if con:
+                con.close() 

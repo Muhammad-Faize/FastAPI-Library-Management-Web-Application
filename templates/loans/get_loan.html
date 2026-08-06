@@ -13,33 +13,33 @@
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
-                    <th>Book Name</th>
-                    <th> Last Borrower</th>
-                    <th>Date Borrowed</th>
-                    <th>Date Returned</th>
-                    <th>Status</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for loan in loans%}
-                <tr>
-                    <td>{{loan.id}}</td>
-                    <td>{{loan.book_name}}</td>
-                    <td>{{loan.borrower_name}}</td>
-                    <td>{{loan.date_borrowed}}</td>
-                    <td>{{loan.date_returned}}</td>
-                    <td class="status {{ loan.book_status | lower }}">{{loan.book_status}}</td>
-                    <td><a class="icon-link" href="/update-loan-page/{{loan.id}}" aria-label="Edit loan">✏️</a>
-                    <a class="icon-link danger" href="/delete-loan-page/{{loan.id}}" aria-label="Delete loan">🗑️</a>
-                    {% if loan.book_status | lower == 'borrowed' %}
-                    <a class="icon-link" onclick='return confirm("Are you sure you want to return the book")' href="/return-loan/{{loan.id}}" aria-label="Return loan">↩️</a></td>
-                    {% endif %}
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                        <th>Book Name</th>
+                        <th>Last Borrower</th>
+                        <th>Date Borrowed</th>
+                        <th>Date Returned</th>
+                        <th>Issued Books</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for loan in loans%}
+                    <tr>
+                        <td>{{loan.book_name}}</td>
+                        <td>{{loan.borrower_name}}</td>
+                        <td>{{loan.date_borrowed}}</td>
+                        <td>{{loan.date_returned}}</td>
+                        <td>{{loan.issued_books}}</td>
+                        <td class="status {{loan.book_status | lower}}">{{loan.book_status}}</td>
+                        <td><a class="icon-link" href="/update-loan-page/{{loan.id}}" aria-label="Edit loan">✏️</a>
+                        <a class="icon-link danger" href="/delete-loan/{{loan.id}}" onclick='alert("Are you sure you want to delete")' aria-label="Delete loan">🗑️</a>
+                        {% if loan.book_status | lower == 'active' %}
+                        <a class="icon-link" onclick='return confirm("Are you sure you want to return the book")' href="/return-loan/{{loan.id}}" aria-label="Return loan">↩️</a></td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
         <div class="page-actions">
             <form action="/add-loan-page" method="GET">

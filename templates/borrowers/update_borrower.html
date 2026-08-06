@@ -8,8 +8,7 @@
 </head>
 <body>
     <form action="/update-borrower" method="POST">
-        <label for="id">Id:</label>
-        <input id='id' type="number" value={{id}} name="id" readonly>
+        <input id='id' type="hidden" value={{id}} name="id" readonly>
         <label for="name">Name:</label>
         <input id='name' type="text" value='{{name}}' name="name" required>
         <button>Update</button>

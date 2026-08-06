@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Borrower</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+</head>
+<body>
+    <div class="page-card">
+        <h1>Search Result</h1>
+        {% if status == 'success'%}
+            <p class="subtitle">Borrower found</p>
+            <input id="id" type="hidden" value="{{borrower['id']}}" readonly>
+            <label for="name">Name</label>
+            <input id="name" type="text" readonly value="{{borrower['name']}}">
+            <div class='table-responsive'>
+                <table>
+                    <thead>
+                        <th>Borrowed Books</th>
+                    </thead>
+                    <tbody>
+                        {% for book in borrowed_books%}
+                        <tr>
+                            <td>{{book['book_name']}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+        {% if status == 'failure' %}
+            <p class="message-box-faliure">Borrower not found</p>
+        {% endif %}
+
+        <div class="page-actions">
+            <a href="/get-borrower" class="third" style="display:inline-block;padding:10px 16px;border-radius:999px;background:rgb(230,233,235);color:var(--text);text-decoration:none;">Back</a>
+        </div>
+    </div>
+</body>
+</html>

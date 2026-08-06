@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS Books(
  	Id SERIAL PRIMARY KEY,
 	Name VARCHAR(255),
 	Author_Id INT,
+	Quantity INT,
 	FOREIGN KEY (Author_Id) REFERENCES Authors(Id)
 );
 
@@ -18,9 +19,15 @@ CREATE TABLE IF NOT EXISTS Loans(
 	Id SERIAL PRIMARY KEY,
 	Borrower_Id INT,
 	Book_Id INT,
+	issued_books INT,
 	Book_status VARCHAR(255),
 	Date_Borrowed TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	Date_Returned TIMESTAMP,
 	FOREIGN KEY (Borrower_Id) REFERENCES Borrowers(Id),
 	FOREIGN KEY (Book_Id) REFERENCES Books(Id)
 );
+CREATE TABLE IF NOT EXISTS Loans_cart(
+	Id SERIAL PRIMARY KEY,
+	Book_Name VARCHAR(255),
+	Quantity INT
+)

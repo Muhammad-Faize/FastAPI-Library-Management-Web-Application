@@ -7,31 +7,35 @@
     <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
 </head>
 <body>
-    <div>
-        <label for="id">Id:</label>
-        <input id="id" type="text" value="{{borrower['id']}}" readonly>
-        <label for="name">Name:</label>
+    <div class="page-card">
+        <h1>Borrower Details</h1>
+        <p class="subtitle">Detailed view of borrowed books for this borrower.</p>
+
+        <input id="id" type="hidden" value="{{borrower['id']}}" readonly>
+        <label for="name">Name</label>
         <input id="name" type="text" value="{{borrower['name']}}" readonly>
+
+        <h3 style="margin-top:18px">Borrowed Books</h3>
+        <div class='table-responsive'>
+            <table>
+                <thead>
+                    <th>Name</th>
+                    <th>Issued copies</th>
+                </thead>
+                <tbody>
+                    {% for book in borrower_books%}
+                    <tr>
+                        <td>{{book['book_name']}}</td>
+                        <td>{{book['issued_books']}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="page-actions">
+            <a href="/get-borrower" class="third" style="display:inline-block;padding:10px 16px;border-radius:999px;background:rgb(230,233,235);color:var(--text);text-decoration:none;">Back</a>
+        </div>
     </div>
-    <h3>Borrowed Books:</h3>
-    <div class='table-responsive'>
-        <table>
-            <thead>
-                <th>Id</th>
-                <th>Name</th>
-            </thead>
-            <tbody>
-                {% for book in borrower_books%}
-                <tr>
-                    <td>{{book['book_id']}}</td>
-                    <td>{{book['book_name']}}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div><br>
-    <form action="/get-borrower">
-        <button>Back</button>
-    </form>
 </body>
 </html>

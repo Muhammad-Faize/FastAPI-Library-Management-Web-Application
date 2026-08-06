@@ -7,25 +7,68 @@
     <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
 </head>
 <body>
-    <form action="/add-loan" method="POST">
-        <label for="borrower">Borrower:</label>
-        <select id="borrower" name="borrower_id" required>
-            <option value="">--SELECT Borrower--</option>
-            {% for borrower in borrowers %}
-            <option value="{{borrower.id}}">{{borrower.name}}</option>
-            {% endfor %}
-        </select>
-        <label for="book">Book:</label>
-        <select id='book' name="book_id" required>
-            <option value="">--SELECT Book--</option>
-            {% for book in books %}
-            <option value="{{book.id}}">{{book.name}}</option>
-            {% endfor %}
-        </select>
-        <button>Add</button>
-        <button type="submit" class='third' formaction="/get-loan" formmethod="GET" formnovalidate>
-            Back
-        </button>
-    </form>
+    <div class="page-card">
+        {% if msg and msg.status == 'faliure' %}
+            <div class="message-box-faliure">{{ msg.detail }}</div>
+        {% endif %}
+        <h1>Add Loan</h1>
+        <p class="subtitle">Select a borrower and book, then add items to the loan cart.</p>
+
+        <form action="/get-loan-cart" method="POST">
+            <label for="borrower">Borrower</label>
+            <input type="text" name="borrower_name" id="borrower" value="{{borrower_name}}" List='borrower-list' placeholder='Enter Borrower Name' required autocomplete='off'>
+            <datalist id="borrower-list">
+                <option value="">--Select Borrower--</option>
+                {% for borrower in borrowers %}
+                    <option value="{{ borrower.name }}">
+                {% endfor %}
+            </datalist>
+
+            <label for="book">Book</label>
+            <input type="text" name="book_name" id="book" List='book-list' placeholder='Enter Book Name' required autocomplete='off'>
+            <datalist id="book-list">
+                <option value="">--Select Book--</option>
+                {% for book in books %}
+                    <option value="{{ book.name }}">
+                {% endfor %}
+            </datalist>
+
+            <label for='quantity'>Quantity</label>
+            <input id='quantity' type = 'number' min = '1' placeholder='Enter quantity' required name= "quantity">
+
+            <div class="page-actions">
+                <button type="submit">Add to cart</button>
+            </div>
+        </form>
+
+        <form action="/add-loan" method="POST">
+            <h3>Cart</h3>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Book Name</th>
+                            <th>Quantity</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {%for loan in loan_cart%}
+                        <tr>
+                            <td>{{loan['book_name']}}</td>
+                            <td>{{loan['quantity']}}</td>
+                            <td><a class="icon-link danger" href="/delete-loan-cart/{{loan['id']}}?borrower_name={{borrower_name}}">🗑️</a></td>
+                        </tr>
+                        {%endfor%}
+                    </tbody>
+                </table>
+            </div>
+            <input type="hidden" value="{{borrower_name}}" name="borrower_name">
+            <div class="page-actions">
+                <button type="submit">Confirm loan</button>
+                <a href="/get-loan" class="third" style="display:inline-block;padding:10px 16px;border-radius:999px;background:rgb(230,233,235);color:var(--text);text-decoration:none;">Back</a>
+            </div>
+        </form>
+    </div>
 </body>
 </html>

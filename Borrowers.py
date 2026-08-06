@@ -52,7 +52,7 @@ class Borrower(BaseModel):
         cur = None
         try:
             con,cur = Connection.connection()
-            cur.execute('''SELECT Books.id as book_id,Books.name as book_name FROM Borrowers JOIN Loans on Borrowers.id = Loans.borrower_id JOIN Books ON Books.id = Loans.book_id WHERE Borrowers.id = %s AND Loans.date_returned IS NULL; ''',(id,))
+            cur.execute('''SELECT Books.id as book_id,Books.name as book_name,Loans.issued_books FROM Borrowers JOIN Loans on Borrowers.id = Loans.borrower_id JOIN Books ON Books.id = Loans.book_id WHERE Borrowers.id = %s AND Loans.date_returned IS NULL; ''',(id,))
             borrower_books = [dict(row) for row in cur.fetchall()]
             cur.execute('''SELECT * From Borrowers where id = %s''',(id,))
             row = cur.fetchone()
@@ -84,7 +84,25 @@ class Borrower(BaseModel):
                 cur.close()
             if con:
                 con.close() 
-    
+    @staticmethod
+    def get_borrower_by_name(borrower_name):
+        con = None
+        cur = None
+        try:
+            con,cur = Connection.connection()
+            cur.execute('''SELECT id FROM Borrowers WHERE name = %s''',(borrower_name.title(),))
+            id = cur.fetchone()
+            if id:
+                return id['id']
+            else:
+                return None
+        except Exception as error:
+            return {'status':"faliure","detail":f"error at get_borrower_by_name :{error}"}
+        finally:
+            if cur:
+                cur.close()
+            if con:
+                con.close()
     @staticmethod
     def delete_borrower(id):
         con = None
@@ -126,4 +144,32 @@ class Borrower(BaseModel):
                 cur.close()
             if con:
                 con.close()  
-    
+        
+    @staticmethod
+    def get_borrower_search(search):
+        con = None
+        cur = None
+        try:
+            con,cur = Connection.connection()
+            cur.execute('''SELECT id,name FROM Borrowers WHERE name ILIKE %s ''',(search,))
+            row = cur.fetchone()
+            if row:
+                borrower = dict(row)
+                status = "success"
+            else:
+                borrower = {}
+                status = "failure"
+            cur.execute('''SELECT Books.id as book_id,Books.name as book_name FROM Borrowers JOIN Loans ON Borrowers.id = Loans.borrower_id Join Books ON Books.id = Loans.Book_id WHERE Borrowers.name ILIKE %s AND Loans.date_returned IS NULL ''',(search,))
+            rows = cur.fetchall()
+            if rows:
+                borrowed_books = [dict(data) for data in rows]
+            else:
+                borrowed_books = [{"book_id":None,"book_name":None}]
+            return borrower,borrowed_books,status
+        except Exception as error:
+            return {'status':"faliure","detail":f"error at update_borrower :{error}"}
+        finally:
+            if cur:
+                cur.close()
+            if con:
+                con.close()  
