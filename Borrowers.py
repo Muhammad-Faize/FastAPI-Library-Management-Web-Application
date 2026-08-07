@@ -2,7 +2,7 @@ import Connection
 from pydantic import Field,BaseModel,field_validator
 
 class Borrower(BaseModel):
-    name : str = Field(min_length=2,max_length=120,description='Add borrower name.')
+    name : str = Field(min_length=1,max_length=120,description='Add borrower name.')
     
     @field_validator('name')
     def clean_name(cls,name):
@@ -127,6 +127,8 @@ class Borrower(BaseModel):
         cur = None
         try:
             name = name.title()
+            if name.isdigit():
+                return {"detail":"Name cannot be a number","status":"faliure"}
             con,cur = Connection.connection()
             cur.execute('''SELECT * FROM Borrowers WHERE id != %s AND NAME ILIKE %s ''',(id,name))
             if cur.fetchone():

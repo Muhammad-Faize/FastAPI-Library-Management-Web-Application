@@ -7,15 +7,20 @@
     <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
 </head>
 <body>
-    <form action="/update-author" method="POST" >
-        <input type="hidden" name="id" value={{id}}>
-        <label for="name">Name:</label>
-        <input id="name" type="text" placeholder="Enter updated author name" name="name" value = "{{name}}" required><br>
-        <button>Update</button>
+    <div class="page-card">
+        <h1>Update Author</h1>
+        <p class="subtitle">Edit the selected author details below.</p>
 
-        <button type="submit" class='third' formaction="/get-author" formmethod="GET" formnovalidate>
-            Back
-        </button>
-    </form>
+        <form action="/update-author" method="POST">
+            <input type="hidden" name="id" value="{{id}}">
+            <label for="name">Name</label>
+            <input id="name" type="text" placeholder="Enter updated author name" name="name" value="{{name}}" required>
+
+            <div class="page-actions">
+                <button type="submit">Update Author</button>
+                <button type="submit" class="third" formaction="/get-author" formmethod="GET" formnovalidate>Back</button>
+            </div>
+        </form>
+    </div>
 </body>
-</html> 
+</html>

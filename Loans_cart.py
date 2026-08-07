@@ -2,7 +2,7 @@ import Connection
 from pydantic import Field,BaseModel
 
 class Loan_cart(BaseModel):
-    Book_Name : str = Field(min_length=2,max_length=120,description="Enter Book_name")
+    Book_Name : str = Field(min_length=1,max_length=120,description="Enter Book_name")
     Quantity : int = Field(gt=0,description="Enter quantity")
 
     def add_loan_cart(self):

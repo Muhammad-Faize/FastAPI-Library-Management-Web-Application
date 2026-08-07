@@ -39,22 +39,22 @@ def add_author_page(request:Request):
 @app.post('/add-author')
 def add_author(request:Request,name:str = Form(...)):
     author = Authors.Author(name = name)
-    return_path = '/get-author'
     msg = author.add_author()
+    authors = Authors.Author.get_auhtor()
     return templates.TemplateResponse(
         request,
-        "output.html",
-        {"request":request,"msg":msg,"return_path":return_path}
+        "authors/get_author.html",
+        {"request":request,"authors":authors,"msg":msg}
     )
 #----------------------------------------------
 @app.get('/delete-author/{id}')
 def delete_author(request:Request,id:int):
     msg = Authors.Author.delete_author(id)
-    return_path = '/get-author'
+    authors = Authors.Author.get_auhtor()
     return templates.TemplateResponse(
         request,
-        "output.html",
-        {"request":request,"msg":msg,"return_path":return_path}
+        "authors/get_author.html",
+        {"request":request,"authors":authors,"msg":msg}
     )
 #---------------------------------------------
 @app.get('/update-author-page/{id}')
@@ -72,11 +72,11 @@ def update_author_page(request:Request,id:int):
 @app.post('/update-author')
 def update_author(request:Request,id:int = Form(...),name:str = Form(...)):
     msg = Authors.Author.update_author(id,name)
-    return_path = '/get-author'
+    authors = Authors.Author.get_auhtor()
     return templates.TemplateResponse(
         request,
-        "output.html",
-        {"request":request,"msg":msg,"return_path":return_path}
+        "authors/get_author.html",
+        {"request":request,"authors":authors,"msg":msg}
     )    
 #---------------------------------------------
 @app.get("/get-borrower")
@@ -101,22 +101,22 @@ def add_borrower_page(request:Request):
 def add_borrower(request:Request,name:str = Form(...)):
     borrower = Borrowers.Borrower(name = name)
     msg = borrower.add_borrower()
-    return_path = '/get-borrower'
+    borrowers = Borrowers.Borrower.get_borrower()
     return templates.TemplateResponse(
         request,
-        "output.html",
-        {"request":request,"msg":msg,"return_path":return_path}
+        "borrowers/get_borrower.html",
+        {"request":request,"borrowers":borrowers,"msg":msg}
     ) 
 
 #------------------------------------------------  
 @app.get("/delete-borrower/{id}")
 def delete_borrower(request:Request,id:int):
     msg = Borrowers.Borrower.delete_borrower(id)
-    return_path = '/get-borrower'
+    borrowers = Borrowers.Borrower.get_borrower()
     return templates.TemplateResponse(
         request,
-        "output.html",
-        {"request":request,"msg":msg,"return_path":return_path}
+        "borrowers/get_borrower.html",
+        {"request":request,"borrowers":borrowers,"msg":msg}
     ) 
 #------------------------------------------------
 @app.get("/update-borrower-page/{id}")
@@ -131,11 +131,11 @@ def update_borrower_page(request:Request,id:int):
 @app.post("/update-borrower")
 def update_borrower(request:Request,id:int = Form(...),name:str = Form(...)):
     msg = Borrowers.Borrower.update_borrower(id,name)
-    return_path = '/get-borrower'
+    borrowers = Borrowers.Borrower.get_borrower()
     return templates.TemplateResponse(
         request,
-        "output.html",
-        {"request":request,"msg":msg,"return_path":return_path}
+        "borrowers/get_borrower.html",
+        {"request":request,"borrowers":borrowers,"msg":msg}
     ) 
 #-------------------------------------------------- 
 @app.get("/get-borrower-details/{id}")
@@ -186,21 +186,21 @@ def add_book(request:Request,name:str = Form(...),author_id:int=Form(...),quanti
         author_id = Authors.Author.get_auhtor_by_name(search)
     book = Books.Book(name = name,author_id = author_id,quantity=quantity)
     msg = book.add_book()
-    return_path = '/get-book'
+    books = Books.Book.get_book()
     return templates.TemplateResponse(
         request,
-        "output.html",
-        {"request":request,"msg":msg,"return_path":return_path}
+        "books/get_book.html",
+        {"request":request,"books":books,"msg":msg}
     ) 
 #----------------------------------------------------
 @app.get("/delete-book/{id}")
 def delete_book(request:Request,id:int):
-    msg = Books.Book.delete_book(id)    
-    return_path = '/get-book'
+    msg = Books.Book.delete_book(id)
+    books = Books.Book.get_book()
     return templates.TemplateResponse(
         request,
-        "output.html",
-        {"request":request,"msg":msg,"return_path":return_path}
+        "books/get_book.html",
+        {"request":request,"books":books,"msg":msg}
     ) 
 #----------------------------------------------------
 @app.get("/update-book-page/{id}")
@@ -214,23 +214,23 @@ def update_book_page(request:Request,id:int):
 @app.post("/update-book")
 def update_book(request:Request,id:int = Form(...),name:str = Form(...),quantity:int=Form(...)):
     msg = Books.Book.update_book(id,name,quantity)
-    return_path = '/get-book'
+    books = Books.Book.get_book()
     return templates.TemplateResponse(
         request,
-        "output.html",
-        {"request":request,"msg":msg,"return_path":return_path}
+        "books/get_book.html",
+        {"request":request,"books":books,"msg":msg}
     ) 
 #-------------------------------------------------------------
 @app.get('/get-book-search')
 def get_book_search(request: Request, search: str):  
-    result = Books.Book.get_book_search(search)
+    books = Books.Book.get_book_search(search)
     return templates.TemplateResponse(
         request,
         "books/get_book_search.html",
         {
             "request": request,
-            "book": result["data"],
-            "status": result["status"]
+            "books": books['data'],
+            "status": books["status"]
         }
     )
 @app.post('/search-author')
@@ -278,43 +278,67 @@ def add_loan(request:Request,borrower_name:str=Form(...)):
         book_id = Books.Book.get_book_by_name(book_name)
         if borrower_id is None:
             msg = {"detail":"Borrower not exists","status":"faliure"}
-            return_path = '/add-loan-page'
+            borrowers = Borrowers.Borrower.get_borrower()
+            books = Loans.Loan.get_unborrowed_book()
+            return templates.TemplateResponse(
+                request,
+                "loans/add_loan.html",
+                {"request":request,"borrowers":borrowers,"books":books,"loan_cart":loan_cart,"msg":msg}
+            )
         elif book_id is None:
             msg = {"detail":"Book not exists","status":"faliure"}
-            return_path = '/add-loan-page'
+            borrowers = Borrowers.Borrower.get_borrower()
+            books = Loans.Loan.get_unborrowed_book()
+            return templates.TemplateResponse(
+                request,
+                "loans/add_loan.html",
+                {"request":request,"borrowers":borrowers,"books":books,"loan_cart":loan_cart,"msg":msg}
+            )
         else: 
                 available = Loans.Loan.get_available_books(book_id)['remaining_quantity']
                 if available >= quantity:
                     loan = Loans.Loan(borrower_id=borrower_id,book_id=book_id,issued_books = quantity)
                     msg = loan.add_loan()
-                    return_path = '/get-loan'
+                    loans = Loans.Loan.get_loan()
+                    return templates.TemplateResponse(
+                        request,
+                        "loans/get_loan.html",
+                        {"request":request,"loans":loans,"msg":msg}
+                    )
                 else:
                     msg = {"detail":"Not enough copies to borrow","status":"faliure"}
-                    return_path = '/add-loan-page'
+                    borrowers = Borrowers.Borrower.get_borrower()
+                    books = Loans.Loan.get_unborrowed_book()
+                    return templates.TemplateResponse(
+                        request,
+                        "loans/add_loan.html",
+                        {"request":request,"borrowers":borrowers,"books":books,"loan_cart":loan_cart,"msg":msg}
+                    )
+    loans = Loans.Loan.get_loan()
     return templates.TemplateResponse(
         request,
-        "output.html",
-        {"request":request,"msg":msg,"return_path":return_path}
+        "loans/get_loan.html",
+        {"request":request,"loans":loans,"msg":msg}
     ) 
 #----------------------------------------------------------
 @app.get("/return-loan/{id}")
 def return_loan(request:Request,id:int):
     msg = Loans.Loan.return_loan(id)
-    return_path = '/get-loan'
+    loans = Loans.Loan.get_loan()
     return templates.TemplateResponse(
         request,
-        "output.html",
-        {"request":request,"msg":msg,"return_path":return_path}
+        "loans/get_loan.html",
+        {"request":request,"loans":loans,"msg":msg}
     ) 
 #-----------------------------------------------------------    
 @app.get("/delete-loan/{id}")
 def delete_loan(request:Request,id:int):
-    msg = Loans.Loan.delete_loan(id)  
-    return_path = '/get-loan'
+    msg = Loans.Loan.delete_loan(id)
+    loans = Loans.Loan.get_loan()
     return templates.TemplateResponse(
         request,
-        "output.html",
-        {"request":request,"msg":msg,"return_path":return_path}
+        "loans/get_loan.html",
+        {"request":request,"loans":loans,"msg":msg}
     )  
 #-----------------------------------------------------------
 @app.get("/update-loan-page/{id}")
@@ -333,11 +357,11 @@ def update_loan(request:Request,id:int=Form(...),book_id:int = Form(...),borrowe
         msg = Loans.Loan.update_loan(id,book_id,borrower_id,issued_books)
     else:
         msg = {"detail":"Not enough copies to borrow","status":"faliure"}
-    return_path = '/get-loan'    
+    loans = Loans.Loan.get_loan()
     return templates.TemplateResponse(
         request,
-        "output.html",
-        {"request":request,"msg":msg,"return_path":return_path}
+        "loans/get_loan.html",
+        {"request":request,"loans":loans,"msg":msg}
     ) 
 #---------------------------------------------------------------
 @app.post("/get-loan-cart")

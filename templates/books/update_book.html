@@ -7,17 +7,22 @@
     <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
 </head>
 <body>
-    <form action="/update-book" method="POST">
-        <label for="id">Id:</label>
-        <input id='id' type="number" name="id" value={{id}} readonly>
-        <label for="name">Name:</label>
-        <input id='name' type="text" name="name" value="{{name}}" required>
-        <label for="quantity">Quantity:</label>
-        <input id='quantity' type="number" name="quantity" value="{{quantity}}" required>
-        <button>Update</button>
-        <button type="submit" class='third' formaction="/get-book" formmethod="GET" formnovalidate>
-            Back
-        </button>
-    </form>
+    <div class="page-card">
+        <h1>Update Book</h1>
+        <p class="subtitle">Adjust the book information below.</p>
+
+        <form action="/update-book" method="POST">
+            <input id="id" type="hidden" name="id" value="{{id}}" readonly>
+            <label for="name">Name</label>
+            <input id="name" type="text" name="name" value="{{name}}" required>
+            <label for="quantity">Quantity</label>
+            <input id="quantity" type="number" name="quantity" value="{{quantity}}" required>
+
+            <div class="page-actions">
+                <button type="submit">Update Book</button>
+                <button type="submit" class="third" formaction="/get-book" formmethod="GET" formnovalidate>Back</button>
+            </div>
+        </form>
+    </div>
 </body>
 </html>

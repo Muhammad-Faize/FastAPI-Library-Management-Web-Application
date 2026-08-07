@@ -7,14 +7,20 @@
     <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
 </head>
 <body>
-    <form action="/update-borrower" method="POST">
-        <input id='id' type="hidden" value={{id}} name="id" readonly>
-        <label for="name">Name:</label>
-        <input id='name' type="text" value='{{name}}' name="name" required>
-        <button>Update</button>
-        <button type="submit" class='third' formaction="/get-borrower" formmethod="GET" formnovalidate>
-            Back
-        </button>
-    </form>
+    <div class="page-card">
+        <h1>Update Borrower</h1>
+        <p class="subtitle">Modify the borrower information below.</p>
+
+        <form action="/update-borrower" method="POST">
+            <input id="id" type="hidden" value="{{id}}" name="id" readonly>
+            <label for="name">Name</label>
+            <input id="name" type="text" value="{{name}}" name="name" required>
+
+            <div class="page-actions">
+                <button type="submit">Update Borrower</button>
+                <button type="submit" class="third" formaction="/get-borrower" formmethod="GET" formnovalidate>Back</button>
+            </div>
+        </form>
+    </div>
 </body>
 </html>

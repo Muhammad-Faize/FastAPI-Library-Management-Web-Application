@@ -16,7 +16,7 @@
 
         <form action="/get-loan-cart" method="POST">
             <label for="borrower">Borrower</label>
-            <input type="text" name="borrower_name" id="borrower" value="{{borrower_name}}" List='borrower-list' placeholder='Enter Borrower Name' required autocomplete='off'>
+            <input type="text" name="borrower_name" id="borrower" value="{{borrower_name}}" List='borrower-list' placeholder='Enter Borrower Name' required autocomplete='off' {% if loan_cart %} readonly {% endif %}>
             <datalist id="borrower-list">
                 <option value="">--Select Borrower--</option>
                 {% for borrower in borrowers %}
@@ -29,7 +29,7 @@
             <datalist id="book-list">
                 <option value="">--Select Book--</option>
                 {% for book in books %}
-                    <option value="{{ book.name }}">
+                    <option value="{{ book.book_name }}"><p>{{book.author_name}}</p>
                 {% endfor %}
             </datalist>
 

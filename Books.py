@@ -2,7 +2,7 @@ import Connection
 from pydantic import Field,BaseModel,field_validator
 
 class Book(BaseModel):
-    name : str = Field(min_length=2,max_length=120,description='Add book name.')
+    name : str = Field(min_length=1,max_length=120,description='Add book name.')
     author_id : int = Field(gt=0,description='Add the author id.')
     quantity:int = Field(gt=-1,description='Add the quantity.')
     @field_validator('name')
@@ -17,9 +17,9 @@ class Book(BaseModel):
             cur.execute('''SELECT Id FROM Authors WHERE Id = %s''',(self.author_id,))
             if cur.fetchone() is None:
                 return {"detail":f"Author id '{self.author_id}' doesnt exists","status":"faliure"}
-            cur.execute('''SELECT * FROM Books WHERE name ILIKE %s''',(self.name,))
+            cur.execute('''SELECT * FROM Books WHERE name ILIKE %s AND author_id = %s''',(self.name,self.author_id))
             if cur.fetchone():
-                return {"detail":"Book already exists","status":"faliure"} 
+                return {"detail":"Record already exists","status":"faliure"} 
             cur.execute('''INSERT INTO Books (Name,Author_Id,Quantity) VALUES (%s,%s,%s)''',(self.name,self.author_id,self.quantity))
             con.commit()
             return {"detail":"Book added successfully","status":"success"}
@@ -138,8 +138,10 @@ class Book(BaseModel):
             if current_book is None:
                 return {"detail":f"Book id '{id}' does not exist","status":"faliure"}
 
-            cur.execute('''SELECT COUNT(*) AS active_loans FROM Loans WHERE book_id = %s AND date_returned IS NULL''',(id,))
-            active_loans = cur.fetchone()['active_loans']
+            issued_books = Book.get_issued_detail(id)
+            active_loans = 0
+            for books in issued_books:
+                active_loans += books['issued_books']
             if quantity < active_loans:
                 return {"detail":f"Cannot reduce quantity to {quantity}. {active_loans} copy(ies) are still on active loan.","status":"faliure"}
 
@@ -190,9 +192,9 @@ class Book(BaseModel):
                         ORDER BY Books.Name;
             ''', (user_inp,))
 
-            data = cur.fetchone()
+            data = [dict(row) for row in cur.fetchall()]
             if data:
-                return {"data": dict(data), "status": "success"}
+                return {"data": data, "status": "success"}
 
             return {"data": {}, "status": "failure"}
         except Exception as error:
@@ -241,4 +243,5 @@ class Book(BaseModel):
                 cur.close()
             if con:
                 con.close() 
-                
+
+

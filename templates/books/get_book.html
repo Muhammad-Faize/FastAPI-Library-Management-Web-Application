@@ -8,6 +8,9 @@
 </head>
 <body>
     <div class="page-card">
+        {% if msg %}
+        <div class="message-box-{{ msg.status if msg.status else 'success' }}">{{ msg.detail }}</div>
+        {% endif %}
         <h2>List of Books</h2>
         <div class="table-responsive">
             <table>

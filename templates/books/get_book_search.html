@@ -11,17 +11,31 @@
     <div class="page-card">
         <h1>Search Result</h1>
         {% if status == 'success'%}
-            <p class="subtitle">Book found</p>
-            <label for="book">Book</label>
-            <input type="text" id="book" value="{{book.book_name}}" readonly>
-            <label for="author">Author</label>
-            <input type="text" id="author" value="{{book.author_name}}" readonly>
-            <label for="quantity">Quantity</label>
-            <input type="text" id="quantity" value="{{book.quantity}}" readonly>
-            <label for="Issued">Issued Books</label>
-            <input type="text" id="Issued" value="{{book.issued_books}}" readonly>
-            <label for="remaining">Remaining Books</label>
-            <input type="text" id="remaining" value="{{book.remaining_books}}" readonly>
+            <p class="subtitle">Book(s) found</p>
+            <table border="1" style="border-collapse: collapse; width: 100%; text-align: center;">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Book</th>
+                        <th>Author</th>
+                        <th>Quantity</th>
+                        <th>Issued Books</th>
+                        <th>Remaining Books</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for book in books %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ book.book_name }}</td>
+                        <td>{{ book.author_name }}</td>
+                        <td>{{ book.quantity }}</td>
+                        <td>{{ book.issued_books }}</td>
+                        <td>{{ book.remaining_books }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         {% endif %}
         {% if status == 'failure'%}
             <p class="message-box-faliure">Book not found</p>

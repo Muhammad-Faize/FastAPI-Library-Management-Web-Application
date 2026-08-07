@@ -82,15 +82,20 @@ class Loan(BaseModel):
         cur = None
         try:
             con,cur = Connection.connection()
-            cur.execute('''SELECT b.id, b.name, b.quantity
-                            FROM books b
-                            LEFT JOIN (
-                                SELECT book_id, COUNT(*) AS active_count
-                                FROM loans
-                                WHERE date_returned IS NULL
-                                GROUP BY book_id
-                            ) active ON active.book_id = b.id
-                            WHERE COALESCE(active.active_count, 0) < b.quantity;''')
+            cur.execute('''SELECT 
+                            b.id,
+                            b.name AS book_name,
+                            a.name AS author_name,
+                            b.quantity
+                        FROM books b
+                        JOIN authors a ON b.author_id = a.id
+                        LEFT JOIN (
+                            SELECT book_id, COUNT(*) AS active_count
+                            FROM loans
+                            WHERE date_returned IS NULL
+                            GROUP BY book_id
+                        ) active ON active.book_id = b.id
+                        WHERE COALESCE(active.active_count, 0) < b.quantity;''')
             books = [dict(row) for row in cur.fetchall()]
             return books
         except Exception as error:
@@ -249,3 +254,4 @@ class Loan(BaseModel):
                 cur.close()
             if con:
                 con.close() 
+
