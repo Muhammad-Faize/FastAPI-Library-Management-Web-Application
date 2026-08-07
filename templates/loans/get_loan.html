@@ -9,9 +9,19 @@
 <body>
     <div class="page-card">
         {% if msg %}
-        <div class="message-box-{{ msg.status if msg.status else 'success' }}">{{ msg.detail }}</div>
+        <div class=message-box-"{{ msg.status }}">{{ msg.detail }}</div>
         {% endif %}
         <h2>List of Loans</h2>
+        <form method="get" action="/get-loan">
+            <label>Records per page:</label>
+            <select name="limit" onchange="this.form.submit()">
+                <option value="10" {% if limit == 10 %}selected{% endif %}>10</option>
+                <option value="50" {% if limit == 50 %}selected{% endif %}>50</option>
+                <option value="100" {% if limit == 100 %}selected{% endif %}>100</option>
+            </select>
+
+            <input type="hidden" name="page" value="{{page}}">
+        </form>
         <div class="table-responsive">
             <table>
                 <thead>
@@ -35,7 +45,6 @@
                         <td>{{loan.issued_books}}</td>
                         <td class="status {{loan.book_status | lower}}">{{loan.book_status}}</td>
                         <td><a class="icon-link" href="/update-loan-page/{{loan.id}}" aria-label="Edit loan">✏️</a>
-                        <a class="icon-link danger" href="/delete-loan/{{loan.id}}" onclick='alert("Are you sure you want to delete")' aria-label="Delete loan">🗑️</a>
                         {% if loan.book_status | lower == 'active' %}
                         <a class="icon-link" onclick='return confirm("Are you sure you want to return the book")' href="/return-loan/{{loan.id}}" aria-label="Return loan">↩️</a></td>
                         {% endif %}
@@ -43,6 +52,23 @@
                     {% endfor %}
                 </tbody>
             </table>
+            <div class="pagination">
+                {% if page > 1 %}
+                    <a href="/get-loan?page={{page-1}}&limit={{limit}}">⬅ Prev</a>
+                {% endif %}
+
+                {% for p in range(1, total_pages + 1) %}
+                    <a href="/get-loan?page={{p}}&limit={{limit}}"
+                    class="{% if p == page %}active{% endif %}">
+                        {{p}}
+                    </a>
+                {% endfor %}
+
+                {% if page < total_pages %}
+                    <a href="/get-loan?page={{page+1}}&limit={{limit}}">Next ➡</a>
+                {% endif %}
+
+            </div>
         </div>
         <div class="page-actions">
             <form action="/add-loan-page" method="GET">

@@ -14,17 +14,17 @@ class Loan(BaseModel):
             cur.execute('''SELECT quantity FROM Books WHERE id = %s''',(self.book_id,))
             book = cur.fetchone()
             if book is None:
-                return {"detail":f"Book id '{self.book_id}' does not exist","status":"faliure"}
+                return {"detail":f"Book id '{self.book_id}' does not exist","status":"failure"}
 
             cur.execute('''SELECT COUNT(*) AS active_count FROM Loans WHERE book_id = %s AND date_returned IS NULL''',(self.book_id,))
             active_count = cur.fetchone()['active_count']
             if active_count >= book['quantity']:
-                return {"detail":f"Book id '{self.book_id}' is not available for loan. All {book['quantity']} copies are currently borrowed.","status":"faliure"}
+                return {"detail":f"Book id '{self.book_id}' is not available for loan. All {book['quantity']} copies are currently borrowed.","status":"failure"}
             cur.execute('''INSERT INTO Loans (borrower_id,book_id,issued_books) VALUES (%s,%s,%s) ''',(self.borrower_id,self.book_id,self.issued_books))
             con.commit()
             return {"detail":f"Loan issued","status":"success"}
         except Exception as error:
-            return {'status':"faliure","detail":f"error at add_loan :{error}"}
+            return {'status':"failure","detail":f"error at add_loan :{error}"}
 
         finally:
             if cur:
@@ -32,7 +32,7 @@ class Loan(BaseModel):
             if con:
                 con.close() 
     @staticmethod
-    def get_loan():
+    def get_loan(limit,offset):
         con = None
         cur = None
         try:
@@ -52,8 +52,8 @@ class Loan(BaseModel):
                             JOIN Books b ON l.book_id = b.id
                             JOIN Borrowers br ON l.borrower_id = br.id
 
-                            ORDER BY (l.Date_Returned IS NULL) DESC, l.id;
-                                ''')
+                            ORDER BY (l.Date_Returned IS NULL) DESC, l.id LIMIT %s OFFSET %s;
+                                ''',(limit,offset))
             loans = [dict(row) for row in cur.fetchall()]
             for loan in loans:
                 if loan['date_borrowed'] is None:
@@ -68,7 +68,7 @@ class Loan(BaseModel):
             con.commit()
             return loans
         except Exception as error:
-            return {'status':"faliure","detail":f"error at get_loan :{error}"}
+            return {'status':"failure","detail":f"error at get_loan :{error}"}
 
         finally:
             if cur:
@@ -76,6 +76,14 @@ class Loan(BaseModel):
             if con:
                 con.close() 
         
+    @staticmethod
+    def count_loans():
+        con, cur = Connection.connection()
+        cur.execute("SELECT COUNT(*) FROM Loans")
+        total = cur.fetchone()['count']
+        cur.close()
+        con.close()
+        return total
     @staticmethod
     def get_unborrowed_book():
         con = None
@@ -99,7 +107,7 @@ class Loan(BaseModel):
             books = [dict(row) for row in cur.fetchall()]
             return books
         except Exception as error:
-            return {'status':"faliure","detail":f"error at get_unborrowed_book :{error}"}
+            return {'status':"failure","detail":f"error at get_unborrowed_book :{error}"}
 
         finally:
             if cur:
@@ -115,15 +123,15 @@ class Loan(BaseModel):
             con,cur = Connection.connection()
             cur.execute('''SELECT id FROM Loans where id = %s ''',(id,))
             if cur.fetchone() is None:
-                return {"detail":f"Loan id '{id}' doesnt exists","status":"faliure"}
+                return {"detail":f"Loan id '{id}' doesnt exists","status":"failure"}
             cur.execute('''SELECT 1 FROM Loans where date_returned IS Null AND id = %s ''',(id,))
             if cur.fetchone() is None:
-                return {"detail":f"Loan id '{id}' is not borrowed.",'status':'faliure'}
+                return {"detail":f"Loan id '{id}' is not borrowed.",'status':'failure'}
             cur.execute('''UPDATE Loans SET date_Returned = CURRENT_TIMESTAMP where id = %s''',(id,))
             con.commit()
             return {"detail":f"Loan returned successfully",'status':'success'}
         except Exception as error:
-            return {'status':"faliure","detail":f"error at return_loan :{error}"}
+            return {'status':"failure","detail":f"error at return_loan :{error}"}
 
         finally:
             if cur:
@@ -141,7 +149,7 @@ class Loan(BaseModel):
             con.commit()
             return {"detail":f"Loan deleted successfully",'status':'success'}
         except Exception as error:
-            return {'status':"faliure","detail":f"error at delete_loan :{error}"}
+            return {'status':"failure","detail":f"error at delete_loan :{error}"}
         finally:
             if cur:
                 cur.close()
@@ -167,7 +175,7 @@ class Loan(BaseModel):
             borrower_name = cur.fetchone()
             return book_id,borrower_id,book_name['name'],borrower_name['name'],issued_books
         except Exception as error:
-            return {'status':"faliure","detail":f"error at get_detail_loan :{error}"}
+            return {'status':"failure","detail":f"error at get_detail_loan :{error}"}
 
         finally:
             if cur:
@@ -184,7 +192,7 @@ class Loan(BaseModel):
             con.commit()        
             return {"detail":f"Loan updated successfully",'status':'success'}
         except Exception as error:
-            return {'status':"faliure","detail":f"error at update_loan :{error}"}
+            return {'status':"failure","detail":f"error at update_loan :{error}"}
 
         finally:
             if cur:
@@ -217,7 +225,7 @@ class Loan(BaseModel):
             books = [dict(row) for row in cur.fetchall()]
             return books,borrowers
         except Exception as error:
-            return {'status':"faliure","detail":f"error at get_items_for_loan :{error}"}
+            return {'status':"failure","detail":f"error at get_items_for_loan :{error}"}
 
         finally:
             if cur:
@@ -226,7 +234,7 @@ class Loan(BaseModel):
                 con.close() 
     
     @staticmethod
-    def get_available_books(book):
+    def get_available_books(id):
         con = None
         cur = None
         try:
@@ -243,7 +251,7 @@ class Loan(BaseModel):
 
                         WHERE b.id = %s
 
-                        GROUP BY b.id, b.quantity;''',(book ,))    
+                        GROUP BY b.id, b.quantity;''',(id,))    
             quantity = dict(cur.fetchone())
             return quantity
         except Exception as error:
@@ -254,4 +262,52 @@ class Loan(BaseModel):
                 cur.close()
             if con:
                 con.close() 
+    @staticmethod
+    def get_issued_books_loan(id):
+        con = None
+        cur = None
+        try:
+            con,cur = Connection.connection()
+            cur.execute('''SELECT 
+                            b.id,
+                            b.quantity AS total_books,
+                            COALESCE(SUM(l.issued_books), 0) AS issued_books,
+                            b.quantity - COALESCE(SUM(l.issued_books), 0) AS remaining_books
+                        FROM Books b
+                        LEFT JOIN Loans l ON l.book_id = b.id
+                        WHERE b.id = %s
+                        GROUP BY b.id, b.quantity;''',(id ,))    
+            quantity = dict(cur.fetchone())
+            return quantity
+        except Exception as error:
+            return {'status':"faliure","detail":f"error at get_available_books :{error}"}
 
+        finally:
+            if cur:
+                cur.close()
+            if con:
+                con.close()    
+
+    @staticmethod
+    def get_single_loan(id):
+        con = None
+        cur = None
+        try:
+            con, cur = Connection.connection()
+            cur.execute('''
+                SELECT id, book_id, borrower_id, issued_books
+                FROM Loans
+                WHERE id = %s
+            ''', (id,))
+            
+            row = cur.fetchone()
+            return dict(row) if row else None
+
+        except Exception as error:
+            return {"status": "failure", "detail": f"error at get_single_loan: {error}"}
+
+        finally:
+            if cur:
+                cur.close()
+            if con:
+                con.close()

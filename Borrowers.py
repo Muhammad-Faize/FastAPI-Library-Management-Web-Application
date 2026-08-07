@@ -14,17 +14,17 @@ class Borrower(BaseModel):
         try:
             con,cur = Connection.connection()
             if (self.name).isdigit():
-                return {"detail":"Name cannot be a number","status":"faliure"}
+                return {"detail":"Name cannot be a number","status":"failure"}
             cur.execute('''SELECT * FROM Borrowers''')
             borrowers = [dict(row) for row in cur.fetchall()]
             for borrower in borrowers:
                 if borrower['name'] == self.name:
-                    return {"detail":f"borrower name '{self.name}' already exists","status":"faliure"}
+                    return {"detail":f"borrower name '{self.name}' already exists","status":"failure"}
             cur.execute('''INSERT INTO Borrowers (Name) VALUES (%s)''',(self.name,))
             con.commit()
             return {"detail":f"Borrower added successfully","status":"success"}
         except Exception as error:
-            return {'status':"faliure","detail":f"error at add_borrower :{error}"}
+            return {'status':"failure","detail":f"error at add_borrower :{error}"}
         finally:
             if cur:
                 cur.close()
@@ -40,7 +40,7 @@ class Borrower(BaseModel):
             borrowers = [dict(row) for row in cur.fetchall()]
             return borrowers
         except Exception as error:
-            return {'status':"faliure","detail":f"error at get_borrower :{error}"}
+            return {'status':"failure","detail":f"error at get_borrower :{error}"}
         finally:
             if cur:
                 cur.close()
@@ -62,7 +62,7 @@ class Borrower(BaseModel):
                 borrower = dict(row)
             return borrower_books,borrower
         except Exception as error:
-            return {'status':"faliure","detail":f"error at get_borrower_detail :{error}"}
+            return {'status':"failure","detail":f"error at get_borrower_detail :{error}"}
         finally:
             if cur:
                 cur.close()
@@ -78,7 +78,7 @@ class Borrower(BaseModel):
             name = cur.fetchone()
             return name['name']
         except Exception as error:
-            return {'status':"faliure","detail":f"error at get_borrower_by_id :{error}"}
+            return {'status':"failure","detail":f"error at get_borrower_by_id :{error}"}
         finally:
             if cur:
                 cur.close()
@@ -97,7 +97,7 @@ class Borrower(BaseModel):
             else:
                 return None
         except Exception as error:
-            return {'status':"faliure","detail":f"error at get_borrower_by_name :{error}"}
+            return {'status':"failure","detail":f"error at get_borrower_by_name :{error}"}
         finally:
             if cur:
                 cur.close()
@@ -114,8 +114,8 @@ class Borrower(BaseModel):
             return {"detail":f"Borrower deleted successfully","status":"success"}
         except Exception as error:
             if 'violates foreign key constraint' in str(error):
-                return {'status':"faliure","detail":f"Borrower id '{id}' is issued with a loan, Hence cant be deleted"} 
-            return {'status':"faliure","detail":f"error at delete_borrower :{error}"}
+                return {'status':"failure","detail":f"Borrower id '{id}' is issued with a loan, Hence cant be deleted"} 
+            return {'status':"failure","detail":f"error at delete_borrower :{error}"}
         finally:
             if cur:
                 cur.close()
@@ -128,19 +128,16 @@ class Borrower(BaseModel):
         try:
             name = name.title()
             if name.isdigit():
-                return {"detail":"Name cannot be a number","status":"faliure"}
+                return {"detail":"Name cannot be a number","status":"failure"}
             con,cur = Connection.connection()
             cur.execute('''SELECT * FROM Borrowers WHERE id != %s AND NAME ILIKE %s ''',(id,name))
             if cur.fetchone():
-                return {"detail":f"Borrower name '{name}' already exists","status":"faliure"}
-            cur.execute('''SELECT * FROM Loans WHERE borrower_id = %s ''',(id,))
-            if cur.fetchone():
-                return {'status':"faliure","detail":f"Borrower id '{id}' is issued with a loan, Hence cant be updated"} 
+                return {"detail":f"Borrower name '{name}' already exists","status":"failure"}
             cur.execute('''UPDATE Borrowers set name = %s where id = %s ''',(name,id))
             con.commit()
             return {"detail":f"Borrower updated successfully","status":"success"}
         except Exception as error:
-            return {'status':"faliure","detail":f"error at update_borrower :{error}"}
+            return {'status':"failure","detail":f"error at update_borrower :{error}"}
         finally:
             if cur:
                 cur.close()
@@ -169,7 +166,7 @@ class Borrower(BaseModel):
                 borrowed_books = [{"book_id":None,"book_name":None}]
             return borrower,borrowed_books,status
         except Exception as error:
-            return {'status':"faliure","detail":f"error at update_borrower :{error}"}
+            return {'status':"failure","detail":f"error at update_borrower :{error}"}
         finally:
             if cur:
                 cur.close()

@@ -8,63 +8,68 @@
 </head>
 <body>
     <div class="page-card">
+        {% if msg %}
+        {% set msg_class = 'message-box-success' if msg.status == 'success' else 'message-box-failure' %}
+        <div class="{{ msg_class }}">{{ msg.detail }}</div>
+        {% endif %}
         <h1>Add Book</h1>
-        <p class="subtitle">Search for an author first, then add a new book linked to that author.</p>
+        <p class="subtitle">Enter the book details first, then search and select the author.</p>
 
         <form action="/search-author" method="POST">
+            <label for="name">Book Name</label>
+            <input id="name" type="text" name="name" placeholder="Enter book name" value="{{name}}" required>
+
+            <label for="quantity">Book Quantity</label>
+            <input id="quantity" type="number" placeholder="Enter quantity" name="quantity" min="1" value="{{quantity}}" required>
+
             <label for="author">Search Author</label>
-            <input type="text" value="{{search}}" name="search" id="author" placeholder="Search Author" required>
+            <input type="text" value="{{search}}" name="search" id="author" placeholder="Search Author" autocomplete ="off" required>
             <div class="page-actions">
-                <button type="submit">Search</button>
-                <a href="/get-book" class="third" style="display:inline-block;padding:10px 16px;border-radius:999px;background:rgb(230,233,235);color:var(--text);text-decoration:none;">Back</a>
+                <button type="submit">Search Author</button>
             </div>
         </form>
 
+        {% if search %}
         <form action="/add-book" method="POST">
-            <input name="search" value="{{search}}" hidden>
+            <input type="hidden" name="name" value="{{name}}">
+            <input type="hidden" name="quantity" value="{{quantity}}">
+            <input type="hidden" name="search" value="{{search}}">
             <input type="hidden" name="author_id" value="0">
-            {% if search %}
-                {% if results %}
-                    <h3>Select Author</h3>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Select</th>
-                                    <th>Name</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for result in results %}
-                                <tr>
-                                    <td>
-                                        <input type="radio" name="author_id" value="{{result.id}}">
-                                    </td>
-                                    <td>{{ result.name }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    <label for="name">Book Name</label>
-                    <input id="name" type="text" name="name" placeholder="Enter book name" required>
-                    <label for="quantity">Book quantity</label>
-                    <input id="quantity" type="number" min="1" name="quantity" placeholder="Enter Quantity" required>
-                    <div class="page-actions">
-                        <button type="submit">Add Book</button>
-                    </div>
-                {% else %}
-                    <input class='message-box-faliure' value='No author found' readonly>
-                    <label for="name">Book Name</label>
-                    <input id="name" type="text" name="name" placeholder="Enter book name" required>
-                    <label for="quantity">Book quantity</label>
-                    <input id="quantity" type="number" min="1" name="quantity" placeholder="Enter Quantity" required>
-                    <div class="page-actions">
-                        <button type="submit">Add Book</button>
-                    </div>
-                {% endif %}
+
+            {% if results %}
+                <h3>Select Author</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Select</th>
+                                <th>Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for result in results %}
+                            <tr>
+                                <td>
+                                    <input type="radio" name="author_id" value="{{result.id}}" required>
+                                </td>
+                                <td>{{ result.name }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="page-actions">
+                    <button type="submit">Add Book</button>
+                </div>
+            {% else %}
+                <div class="message-box-failure">No author found. Try another search.</div>
+                <div class="page-actions">
+                    <button type="submit">Add Book</button>
+                </div>
             {% endif %}
         </form>
+        {% endif %}
+        <a href="/get-book" class="third" style="display:inline-block;padding:10px 16px;border-radius:999px;background:rgb(230,233,235);color:var(--text);text-decoration:none;">Back</a>
     </div>
 </body>
 </html>

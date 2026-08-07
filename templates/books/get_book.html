@@ -9,7 +9,9 @@
 <body>
     <div class="page-card">
         {% if msg %}
-        <div class="message-box-{{ msg.status if msg.status else 'success' }}">{{ msg.detail }}</div>
+        {% set is_success = msg.status|lower == 'success' %}
+        {% set msg_class = 'message-box-success' if is_success else 'message-box-failure' %}
+        <div class="{{ msg_class }}">{{ msg.detail }}</div>
         {% endif %}
         <h2>List of Books</h2>
         <div class="table-responsive">
@@ -44,7 +46,7 @@
         </div>
         <form action="/get-book-search">
             <label for="name">Search Book:</label>
-            <input type="text" name="search" id="name" required placeholder='Search book....'>
+            <input type="text" name="search" id="name" required placeholder='Search book....' autocomplete="off">
             <button style="margin-left: auto; display: block;">search</button>
         </form>
         <div class="page-actions">

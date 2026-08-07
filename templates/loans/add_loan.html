@@ -8,8 +8,10 @@
 </head>
 <body>
     <div class="page-card">
-        {% if msg and msg.status == 'faliure' %}
-            <div class="message-box-faliure">{{ msg.detail }}</div>
+        {% if msg %}
+            {% set is_success = msg.status|lower == 'success' %}
+            {% set msg_class = 'message-box-success' if is_success else 'message-box-failure' %}
+            <div class="{{ msg_class }}">{{ msg.detail }}</div>
         {% endif %}
         <h1>Add Loan</h1>
         <p class="subtitle">Select a borrower and book, then add items to the loan cart.</p>

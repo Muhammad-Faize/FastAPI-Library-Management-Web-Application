@@ -16,16 +16,16 @@ class Book(BaseModel):
             con,cur = Connection.connection()
             cur.execute('''SELECT Id FROM Authors WHERE Id = %s''',(self.author_id,))
             if cur.fetchone() is None:
-                return {"detail":f"Author id '{self.author_id}' doesnt exists","status":"faliure"}
+                return {"detail":f"Author id '{self.author_id}' doesnt exists","status":"failure"}
             cur.execute('''SELECT * FROM Books WHERE name ILIKE %s AND author_id = %s''',(self.name,self.author_id))
             if cur.fetchone():
-                return {"detail":"Record already exists","status":"faliure"} 
+                return {"detail":"Record already exists","status":"failure"} 
             cur.execute('''INSERT INTO Books (Name,Author_Id,Quantity) VALUES (%s,%s,%s)''',(self.name,self.author_id,self.quantity))
             con.commit()
             return {"detail":"Book added successfully","status":"success"}
 
         except Exception as error:
-            return {'status':"faliure","detail":f"error at add_book :{error}"}
+            return {'status':"failure","detail":f"error at add_book :{error}"}
 
         finally:
             if cur:
@@ -64,7 +64,7 @@ class Book(BaseModel):
             books = [dict(row) for row in cur.fetchall()]
             return books
         except Exception as error:
-            return {'status':"faliure","detail":f"error at get_book :{error}"}
+            return {'status':"failure","detail":f"error at get_book :{error}"}
 
         finally:
             if cur:
@@ -82,8 +82,8 @@ class Book(BaseModel):
             return {"detail":"Book deleted successfully","status":"success"}
         except Exception as error:
             if 'violates foreign key constraint' in str(error):
-                return {'status':"faliure","detail":f"Book id '{id}' is issued to a loan, Hence cant be deleted"} 
-            return {'status':"faliure","detail":f"error at delete_book :{error}"}
+                return {'status':"failure","detail":f"Book id '{id}' is issued to a loan, Hence cant be deleted"} 
+            return {'status':"failure","detail":f"error at delete_book :{error}"}
 
         finally:
             if cur:
@@ -100,7 +100,7 @@ class Book(BaseModel):
             name = cur.fetchone()
             return name['name'],name['quantity']
         except Exception as error:
-            return {'status':"faliure","detail":f"error at get_book_by_id :{error}"}
+            return {'status':"failure","detail":f"error at get_book_by_id :{error}"}
 
         finally:
             if cur:
@@ -121,7 +121,7 @@ class Book(BaseModel):
             else:
                 return None
         except Exception as error:
-            return {'status':"faliure","detail":f"error at get_book_by_name :{error}"}
+            return {'status':"failure","detail":f"error at get_book_by_name :{error}"}
         finally:
             if cur:
                 cur.close()
@@ -136,23 +136,23 @@ class Book(BaseModel):
             cur.execute('''SELECT quantity FROM Books WHERE id = %s''',(id,))
             current_book = cur.fetchone()
             if current_book is None:
-                return {"detail":f"Book id '{id}' does not exist","status":"faliure"}
+                return {"detail":f"Book id '{id}' does not exist","status":"failure"}
 
             issued_books = Book.get_issued_detail(id)
             active_loans = 0
             for books in issued_books:
                 active_loans += books['issued_books']
             if quantity < active_loans:
-                return {"detail":f"Cannot reduce quantity to {quantity}. {active_loans} copy(ies) are still on active loan.","status":"faliure"}
+                return {"detail":f"Cannot reduce quantity to {quantity}. {active_loans} copy(ies) are still on active loan.","status":"failure"}
 
             cur.execute('''SELECT * FROM Books WHERE id != %s AND name ILIKE %s''',(id,name))
             if cur.fetchone():
-                return {"detail":f"'{name}' already exists","status":"faliure"}
-            cur.execute('''UPDATE Books SET name = %s,quantity = %s WHERE id = %s ''',(name,quantity,id))
+                return {"detail":f"'{name}' already exists","status":"failure"}
+            cur.execute('''UPDATE Books SET name = %s,quantity = %s WHERE id = %s ''',(name.title(),quantity,id))
             con.commit()
             return {"detail":"Book updated successfully","status":"success"}
         except Exception as error:
-            return {'status':"faliure","detail":f"error at update_book :{error}"}
+            return {'status':"failure","detail":f"error at update_book :{error}"}
 
         finally:
             if cur:
@@ -236,7 +236,7 @@ class Book(BaseModel):
             data = [dict(data) for data in cur.fetchall()]
             return data
         except Exception as error:
-            return {'status':"faliure","detail":f"error at get_borrowed_books_details :{error}"}
+            return {'status':"failure","detail":f"error at get_borrowed_books_details :{error}"}
 
         finally:
             if cur:

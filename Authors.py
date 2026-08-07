@@ -16,14 +16,14 @@ class Author(BaseModel):
             con,cur = Connection.connection()
             cur.execute('''SELECT * FROM Authors WHERE name = %s ''',(self.name,))
             if cur.fetchone():
-                return {"detail":"Author already exists","status":"faliure"}
+                return {"detail":"Author already exists","status":"failure"}
             if (self.name).isdigit():
-                return {"detail":"Name cannot be a number","status":"faliure"}
+                return {"detail":"Name cannot be a number","status":"failure"}
             cur.execute('''INSERT INTO Authors (Name) VALUES (%s)''',(self.name,))
             con.commit()
             return {"detail":"Author added sucessfully","status":"success"}
         except Exception as error:
-            return {'status':"faliure","detail":f"error at add_author :{error}"}
+            return {'status':"failure","detail":f"error at add_author :{error}"}
         finally:
             if cur:
                 cur.close()
@@ -40,7 +40,7 @@ class Author(BaseModel):
             authors = [dict(row) for row in cur.fetchall()]
             return authors
         except Exception as error:
-            return {'status':"faliure","detail":f"error at get_author :{error}"}    
+            return {'status':"failure","detail":f"error at get_author :{error}"}    
         finally:
             if cur:
                 cur.close()
@@ -59,7 +59,7 @@ class Author(BaseModel):
                 return id['id']
             return None
         except Exception as error:
-            return {'status':"faliure","detail":f"error at add_author_by_name :{error}"}
+            return {'status':"failure","detail":f"error at add_author_by_name :{error}"}
         
         finally:
             if cur:
@@ -78,7 +78,7 @@ class Author(BaseModel):
             return name['name']
        
         except Exception as error:
-            return {'status':"faliure","detail":f"error at add_author_by_id :{error}"}
+            return {'status':"failure","detail":f"error at add_author_by_id :{error}"}
         
         finally:
             if cur:
@@ -97,8 +97,8 @@ class Author(BaseModel):
             return {"detail":'Author deleted successfully',"status":"success"}
         except Exception as error:
             if 'violates foreign key constraint' in str(error):
-                return {'status':"faliure","detail":f"Author id '{id}' is issued with a book, Hence cant be deleted"}    
-            return {'status':"faliure","detail":f"error at delete_author :{error}"}    
+                return {'status':"failure","detail":f"Author id '{id}' is issued with a book, Hence cant be deleted"}    
+            return {'status':"failure","detail":f"error at delete_author :{error}"}    
         
         finally:
             if cur:
@@ -112,20 +112,17 @@ class Author(BaseModel):
         try:
             name = name.title()
             if name.isdigit():
-                return {"detail":"Name cannot be a number","status":"faliure"}
+                return {"detail":"Name cannot be a number","status":"failure"}
             con,cur = Connection.connection()
             cur.execute('''SELECT * FROM Authors WHERE id != %s AND NAME ILIKE %s ''',(id,name))
             if cur.fetchone():
-                return {"detail":f"Author name '{name}' already exists","status":"faliure"}
-            cur.execute('''SELECT * FROM Books WHERE author_id = %s ''',(id,))
-            if cur.fetchone():
-                return {'status':"faliure","detail":f"Author id '{id}' is issued with a book, Hence cant be updated"} 
+                return {"detail":f"Author name '{name}' already exists","status":"failure"}
             cur.execute('''UPDATE Authors set name = %s where id = %s ''',(name,id))
             con.commit()
             return {"detail":'Author updated successfully',"status":"success"}
 
         except Exception as error:
-            return {'status':"faliure","detail":f"error at update_author :{error}"}
+            return {'status':"failure","detail":f"error at update_author :{error}"}
         
         finally:
             if cur:
@@ -147,7 +144,7 @@ class Author(BaseModel):
             else:
                 return None
         except Exception as error:
-            return {'status':"faliure","detail":f"error at search_author :{error}"}
+            return {'status':"failure","detail":f"error at search_author :{error}"}
         
         finally:
             if cur:
