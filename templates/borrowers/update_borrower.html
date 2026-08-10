@@ -14,7 +14,7 @@
         <form action="/update-borrower" method="POST">
             <input id="id" type="hidden" value="{{id}}" name="id" readonly>
             <label for="name">Name</label>
-            <input id="name" type="text" value="{{name}}" name="name" required>
+            <input id="name" type="text" value="{{name}}" name="name" autocomplete = "off" required>
 
             <div class="page-actions">
                 <button type="submit">Update Borrower</button>

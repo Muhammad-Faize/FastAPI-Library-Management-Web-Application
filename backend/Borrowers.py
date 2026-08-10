@@ -90,7 +90,7 @@ class Borrower(BaseModel):
         cur = None
         try:
             con,cur = Connection.connection()
-            cur.execute('''SELECT id FROM Borrowers WHERE name = %s''',(borrower_name.title(),))
+            cur.execute('''SELECT id FROM Borrowers WHERE name = %s''',(borrower_name.title().strip(),))
             id = cur.fetchone()
             if id:
                 return id['id']
@@ -114,7 +114,7 @@ class Borrower(BaseModel):
             return {"detail":f"Borrower deleted successfully","status":"success"}
         except Exception as error:
             if 'violates foreign key constraint' in str(error):
-                return {'status':"failure","detail":f"Borrower id '{id}' is issued with a loan, Hence cant be deleted"} 
+                return {'status':"failure","detail":f"Borrower is issued with a loan, Hence cant be deleted"} 
             return {'status':"failure","detail":f"error at delete_borrower :{error}"}
         finally:
             if cur:
@@ -150,7 +150,7 @@ class Borrower(BaseModel):
         cur = None
         try:
             con,cur = Connection.connection()
-            cur.execute('''SELECT id,name FROM Borrowers WHERE name ILIKE %s ''',(search,))
+            cur.execute('''SELECT id,name FROM Borrowers WHERE name ILIKE %s ''',(search.strip().title(),))
             row = cur.fetchone()
             if row:
                 borrower = dict(row)

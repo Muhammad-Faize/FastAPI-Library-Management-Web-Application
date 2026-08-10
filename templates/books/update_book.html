@@ -14,7 +14,7 @@
         <form action="/update-book" method="POST">
             <input id="id" type="hidden" name="id" value="{{id}}" readonly>
             <label for="name">Name</label>
-            <input id="name" type="text" name="name" value="{{name}}" required>
+            <input id="name" type="text" name="name" value="{{name}}" required autocomplete = "off" >
             <label for="quantity">Quantity</label>
             <input id="quantity" type="number" name="quantity" value="{{quantity}}" required>
 

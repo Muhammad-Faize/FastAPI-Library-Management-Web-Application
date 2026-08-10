@@ -33,7 +33,7 @@
                             {% endif%}
                             </td>
                         <td><a class="icon-link" href="/update-borrower-page/{{borrower.id}}" aria-label="Edit borrower">✏️</a> 
-                        <a class="icon-link danger" href="/delete-borrower/{{borrower.id}}" onclick='alert("Are you sure you want to delete")' aria-label="Delete borrower">🗑️</a></td>
+                        <a class="icon-link danger" href="/delete-borrower/{{borrower.id}}" onclick='return confirm("Are you sure you want to delete")' aria-label="Delete borrower">🗑️</a></td>
                     </tr>
                     {%endfor%}
                 </tbody>

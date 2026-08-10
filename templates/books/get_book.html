@@ -34,11 +34,11 @@
                         <td>{{book.quantity}}</td>
                         <td>{{book.issued_books}}<br>
                             {% if book.issued_books > 0%}
-                            <a href="get-issued-detail/{{book.id}}">view</a></td>
+                            <a href="/get-issued-detail/{{book.id}}">view</a></td>
                             {% endif %}
                         <td>{{book.remaining_books}}</td>
                         <td><a class="icon-link" href="/update-book-page/{{book.id}}" aria-label="Edit book">✏️</a>
-                        <a class="icon-link danger" onclick='alert("Are you sure you want to delete")' href="/delete-book/{{book.id}}" aria-label="Delete book">🗑️</a></td>
+                        <a class="icon-link danger" onclick='return confirm("Are you sure you want to delete")' href="/delete-book/{{book.id}}" aria-label="Delete book">🗑️</a></td>
                     </tr>
                     {% endfor%}
                 </tbody>

@@ -97,7 +97,7 @@ class Author(BaseModel):
             return {"detail":'Author deleted successfully',"status":"success"}
         except Exception as error:
             if 'violates foreign key constraint' in str(error):
-                return {'status':"failure","detail":f"Author id '{id}' is issued with a book, Hence cant be deleted"}    
+                return {'status':"failure","detail":f"Author is issued with a book, Hence cant be deleted"}    
             return {'status':"failure","detail":f"error at delete_author :{error}"}    
         
         finally:

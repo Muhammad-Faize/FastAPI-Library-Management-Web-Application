@@ -37,7 +37,6 @@
 
             <label for='quantity'>Quantity</label>
             <input id='quantity' type = 'number' min = '1' placeholder='Enter quantity' required name= "quantity">
-
             <div class="page-actions">
                 <button type="submit">Add to cart</button>
             </div>
@@ -53,13 +52,13 @@
                             <th>Quantity</th>
                             <th></th>
                         </tr>
-                    </thead>
+                    </thead>    
                     <tbody>
                         {%for loan in loan_cart%}
                         <tr>
                             <td>{{loan['book_name']}}</td>
                             <td>{{loan['quantity']}}</td>
-                            <td><a class="icon-link danger" href="/delete-loan-cart/{{loan['id']}}?borrower_name={{borrower_name}}">🗑️</a></td>
+                            <td><a class="icon-link danger" href="/delete-loan-cart/{{loan['id']}}?borrower_name={{borrower_name}}&borrowers={{borrowers}}">🗑️</a></td>
                         </tr>
                         {%endfor%}
                     </tbody>

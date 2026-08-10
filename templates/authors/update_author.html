@@ -14,7 +14,7 @@
         <form action="/update-author" method="POST">
             <input type="hidden" name="id" value="{{id}}">
             <label for="name">Name</label>
-            <input id="name" type="text" placeholder="Enter updated author name" name="name" value="{{name}}" required>
+            <input id="name" type="text" placeholder="Enter updated author name" name="name" value="{{name}}" required autocomplete = "off">
 
             <div class="page-actions">
                 <button type="submit">Update Author</button>

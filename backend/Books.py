@@ -16,7 +16,7 @@ class Book(BaseModel):
             con,cur = Connection.connection()
             cur.execute('''SELECT Id FROM Authors WHERE Id = %s''',(self.author_id,))
             if cur.fetchone() is None:
-                return {"detail":f"Author id '{self.author_id}' doesnt exists","status":"failure"}
+                return {"detail":f"Author doesnt exists","status":"failure"}
             cur.execute('''SELECT * FROM Books WHERE name ILIKE %s AND author_id = %s''',(self.name,self.author_id))
             if cur.fetchone():
                 return {"detail":"Record already exists","status":"failure"} 
@@ -82,7 +82,7 @@ class Book(BaseModel):
             return {"detail":"Book deleted successfully","status":"success"}
         except Exception as error:
             if 'violates foreign key constraint' in str(error):
-                return {'status':"failure","detail":f"Book id '{id}' is issued to a loan, Hence cant be deleted"} 
+                return {'status':"failure","detail":f"Book is issued to a loan, Hence cant be deleted"} 
             return {'status':"failure","detail":f"error at delete_book :{error}"}
 
         finally:
@@ -133,10 +133,12 @@ class Book(BaseModel):
         cur = None
         try:
             con,cur = Connection.connection()
+            if quantity < 1:
+                return {"detail":f"Invalid quantity number","status":"failure"}
             cur.execute('''SELECT quantity FROM Books WHERE id = %s''',(id,))
             current_book = cur.fetchone()
             if current_book is None:
-                return {"detail":f"Book id '{id}' does not exist","status":"failure"}
+                return {"detail":f"Book doesnt exist","status":"failure"}
 
             issued_books = Book.get_issued_detail(id)
             active_loans = 0
@@ -145,9 +147,6 @@ class Book(BaseModel):
             if quantity < active_loans:
                 return {"detail":f"Cannot reduce quantity to {quantity}. {active_loans} copy(ies) are still on active loan.","status":"failure"}
 
-            cur.execute('''SELECT * FROM Books WHERE id != %s AND name ILIKE %s''',(id,name))
-            if cur.fetchone():
-                return {"detail":f"'{name}' already exists","status":"failure"}
             cur.execute('''UPDATE Books SET name = %s,quantity = %s WHERE id = %s ''',(name.title(),quantity,id))
             con.commit()
             return {"detail":"Book updated successfully","status":"success"}
@@ -190,7 +189,7 @@ class Book(BaseModel):
                         GROUP BY Authors.Name, Books.Name, Books.quantity
 
                         ORDER BY Books.Name;
-            ''', (user_inp,))
+            ''', (f"%{user_inp}%",))
 
             data = [dict(row) for row in cur.fetchall()]
             if data:

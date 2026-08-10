@@ -64,7 +64,6 @@ class Loan(BaseModel):
 
                 else:
                     loan['book_status'] = 'Returned'
-            cur.execute('''TRUNCATE TABLE Loans_cart ''')
             con.commit()
             return loans
         except Exception as error:
@@ -91,19 +90,21 @@ class Loan(BaseModel):
         try:
             con,cur = Connection.connection()
             cur.execute('''SELECT 
-                            b.id,
-                            b.name AS book_name,
-                            a.name AS author_name,
-                            b.quantity
-                        FROM books b
-                        JOIN authors a ON b.author_id = a.id
-                        LEFT JOIN (
-                            SELECT book_id, COUNT(*) AS active_count
-                            FROM loans
-                            WHERE date_returned IS NULL
-                            GROUP BY book_id
-                        ) active ON active.book_id = b.id
-                        WHERE COALESCE(active.active_count, 0) < b.quantity;''')
+                                b.id,
+                                b.name AS book_name,
+                                a.name AS author_name,
+                                b.quantity
+                            FROM books b
+                            JOIN authors a ON b.author_id = a.id
+                            LEFT JOIN (
+                                SELECT 
+                                    book_id,
+                                    SUM(issued_books) AS active_count
+                                FROM loans
+                                WHERE date_returned IS NULL
+                                GROUP BY book_id
+                            ) active ON active.book_id = b.id
+                            WHERE COALESCE(active.active_count, 0) < b.quantity;''')
             books = [dict(row) for row in cur.fetchall()]
             return books
         except Exception as error:
@@ -209,18 +210,22 @@ class Loan(BaseModel):
             cur.execute('''SELECT * FROM Borrowers''')
             borrowers = [dict(row) for row in cur.fetchall()]
             cur.execute('''
-            SELECT 
-                b.id AS book_id,
-                b.name AS book_name
-            FROM Books b
-            LEFT JOIN (
-                SELECT book_id, COUNT(*) AS active_count
-                FROM Loans
-                WHERE date_returned IS NULL
-                AND id != %s
-                GROUP BY book_id
-            ) active ON active.book_id = b.id
-            WHERE COALESCE(active.active_count, 0) < b.quantity;
+                            SELECT 
+                                b.id,
+                                b.name AS book_name,
+                                a.name AS author_name,
+                                b.quantity
+                            FROM books b
+                            JOIN authors a ON b.author_id = a.id
+                            LEFT JOIN (
+                                SELECT 
+                                    book_id,
+                                    SUM(issued_books) AS active_count
+                                FROM loans
+                                WHERE date_returned IS NULL
+                                GROUP BY book_id
+                            ) active ON active.book_id = b.id
+                            WHERE COALESCE(active.active_count, 0) < b.quantity;
         ''', (id,))            
             books = [dict(row) for row in cur.fetchall()]
             return books,borrowers
@@ -268,15 +273,19 @@ class Loan(BaseModel):
         cur = None
         try:
             con,cur = Connection.connection()
-            cur.execute('''SELECT 
-                            b.id,
-                            b.quantity AS total_books,
-                            COALESCE(SUM(l.issued_books), 0) AS issued_books,
-                            b.quantity - COALESCE(SUM(l.issued_books), 0) AS remaining_books
-                        FROM Books b
-                        LEFT JOIN Loans l ON l.book_id = b.id
-                        WHERE b.id = %s
-                        GROUP BY b.id, b.quantity;''',(id ,))    
+            cur.execute('''
+                SELECT 
+                    b.id,
+                    b.quantity AS total_books,
+                    COALESCE(SUM(l.issued_books), 0) AS issued_books,
+                    b.quantity - COALESCE(SUM(l.issued_books), 0) AS remaining_books
+                FROM Books b
+                LEFT JOIN Loans l
+                    ON l.book_id = b.id
+                    AND l.date_returned IS NULL
+                WHERE b.id = %s
+                GROUP BY b.id, b.quantity;
+            ''', (id,))    
             quantity = dict(cur.fetchone())
             return quantity
         except Exception as error:
@@ -311,3 +320,4 @@ class Loan(BaseModel):
                 cur.close()
             if con:
                 con.close()
+
