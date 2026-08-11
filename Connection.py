@@ -1,11 +1,14 @@
 import psycopg2
 import psycopg2.extras
+import os
+from dotenv import load_dotenv
 
-host="localhost"
-dbname="LibraryDatabase"
-user="postgres"
-password="009099"
-port=5434
+load_dotenv()
+host = os.getenv('host')
+dbname = os.getenv('dbname')
+user = os.getenv('user')
+password = os.getenv('password')
+port = os.getenv('port')
 
 def connection():
     con = psycopg2.connect(

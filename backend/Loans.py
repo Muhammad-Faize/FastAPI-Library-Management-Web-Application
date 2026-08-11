@@ -14,7 +14,7 @@ class Loan(BaseModel):
             cur.execute('''SELECT quantity FROM Books WHERE id = %s''',(self.book_id,))
             book = cur.fetchone()
             if book is None:
-                return {"detail":f"Book id '{self.book_id}' does not exist","status":"failure"}
+                return {"detail":f"Book does not exist","status":"failure"}
 
             cur.execute('''SELECT COUNT(*) AS active_count FROM Loans WHERE book_id = %s AND date_returned IS NULL''',(self.book_id,))
             active_count = cur.fetchone()['active_count']
@@ -124,10 +124,10 @@ class Loan(BaseModel):
             con,cur = Connection.connection()
             cur.execute('''SELECT id FROM Loans where id = %s ''',(id,))
             if cur.fetchone() is None:
-                return {"detail":f"Loan id '{id}' doesnt exists","status":"failure"}
+                return {"detail":f"Loan doesnt exists","status":"failure"}
             cur.execute('''SELECT 1 FROM Loans where date_returned IS Null AND id = %s ''',(id,))
             if cur.fetchone() is None:
-                return {"detail":f"Loan id '{id}' is not borrowed.",'status':'failure'}
+                return {"detail":f"Loan is not borrowed.",'status':'failure'}
             cur.execute('''UPDATE Loans SET date_Returned = CURRENT_TIMESTAMP where id = %s''',(id,))
             con.commit()
             return {"detail":f"Loan returned successfully",'status':'success'}

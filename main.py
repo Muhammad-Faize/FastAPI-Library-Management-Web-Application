@@ -1,9 +1,7 @@
 from fastapi import Form
 from fastapi import FastAPI, Request,Query
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-import backend.Authors as Authors,backend.Books as Books,backend.Borrowers as Borrowers,backend.Loans as Loans,Create_table,backend.Loans_cart as Loans_cart,Connection
- 
+import Create_table 
 from config import templates
  
 from routes import author
