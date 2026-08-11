@@ -5,7 +5,7 @@ def create_table():
     cur = None
     try:
         con,cur = Connection.connection()
-        folder = "C:\\Users\\Tauqe\\OneDrive\\Desktop\\learnerpy\\problem_set_code\\fastapi\\project_library_api"
+        folder = os.path.dirname(os.path.abspath(__file__))
         files = ['script.sql']
         for file in files:
             file_path = os.path.join(folder,file)

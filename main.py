@@ -14,6 +14,7 @@ app = FastAPI()
 Create_table.create_table()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
 @app.get("/")
 def menu_page(request: Request):
     return templates.TemplateResponse(
@@ -27,3 +28,4 @@ app.include_router(author.router)
 app.include_router(borrower.router)
 app.include_router(book.router)
 app.include_router(loan.router)
+    
