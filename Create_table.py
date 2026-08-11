@@ -20,4 +20,4 @@ def create_table():
         if cur:
             cur.close()
         if con:
-            con.close()  
+            Connection.release_connection(con)  

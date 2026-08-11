@@ -140,6 +140,8 @@ def add_loan(request: Request,borrower_name: str = Form(...)):
     con, cur = Connection.connection()
     cur.execute("TRUNCATE TABLE Loans_cart")
     con.commit()
+    cur.close()
+    Connection.release_connection(con)
 
     page = 1
     limit = 10

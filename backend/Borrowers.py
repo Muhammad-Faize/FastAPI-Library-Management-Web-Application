@@ -29,7 +29,7 @@ class Borrower(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close()  
+                Connection.release_connection(con)  
     @staticmethod
     def get_borrower():
         con = None
@@ -45,7 +45,7 @@ class Borrower(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close() 
+                Connection.release_connection(con) 
     @staticmethod
     def get_borrower_details(id):
         con = None
@@ -67,7 +67,7 @@ class Borrower(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close() 
+                Connection.release_connection(con) 
     @staticmethod
     def get_borrower_by_id(id):
         con = None
@@ -83,7 +83,7 @@ class Borrower(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close() 
+                Connection.release_connection(con) 
     @staticmethod
     def get_borrower_by_name(borrower_name):
         con = None
@@ -102,7 +102,7 @@ class Borrower(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close()
+                Connection.release_connection(con)
     @staticmethod
     def delete_borrower(id):
         con = None
@@ -120,7 +120,7 @@ class Borrower(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close()      
+                Connection.release_connection(con)      
     @staticmethod
     def update_borrower(id,name):
         con = None
@@ -142,7 +142,7 @@ class Borrower(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close()  
+                Connection.release_connection(con)  
         
     @staticmethod
     def get_borrower_search(search):
@@ -171,4 +171,4 @@ class Borrower(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close()  
+                Connection.release_connection(con)  

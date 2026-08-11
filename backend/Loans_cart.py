@@ -27,7 +27,7 @@ class Loan_cart(BaseModel):
             if con:
                 con.close()
             if cur:
-                cur.close()
+                Connection.release_connection(con)
     @staticmethod
     def get_loan_cart():
         con = None
@@ -44,7 +44,7 @@ class Loan_cart(BaseModel):
             if con:
                 con.close()
             if cur:
-                cur.close()
+                Connection.release_connection(con)
     @staticmethod
     def delete_loan_cart(id):
         con = None
@@ -60,5 +60,5 @@ class Loan_cart(BaseModel):
             if con:
                 con.close()
             if cur:
-                cur.close()
+                Connection.release_connection(con)
 

@@ -31,7 +31,7 @@ class Book(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close()  
+                Connection.release_connection(con)  
     @staticmethod
     def get_book():    
         con = None  
@@ -70,7 +70,7 @@ class Book(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close()  
+                Connection.release_connection(con)  
     @staticmethod
     def delete_book(id):  
         con = None
@@ -89,7 +89,7 @@ class Book(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close()   
+                Connection.release_connection(con)   
     @staticmethod
     def get_book_by_id(id):  
         con = None
@@ -106,7 +106,7 @@ class Book(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close()    
+                Connection.release_connection(con)    
 
     @staticmethod
     def get_book_by_name(book_name):
@@ -126,7 +126,7 @@ class Book(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close()
+                Connection.release_connection(con)
     @staticmethod
     def update_book(id,name,quantity):
         con = None
@@ -157,7 +157,7 @@ class Book(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close()      
+                Connection.release_connection(con)      
     @staticmethod
     def get_book_search(user_inp):
         con = None
@@ -207,7 +207,7 @@ class Book(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close()   
+                Connection.release_connection(con)   
         
     @staticmethod
     def get_issued_detail(id):   
@@ -241,6 +241,6 @@ class Book(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close() 
+                Connection.release_connection(con) 
 
 

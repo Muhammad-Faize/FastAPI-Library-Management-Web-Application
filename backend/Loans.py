@@ -30,7 +30,7 @@ class Loan(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close() 
+                Connection.release_connection(con)
     @staticmethod
     def get_loan(limit,offset):
         con = None
@@ -73,7 +73,7 @@ class Loan(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close() 
+                Connection.release_connection(con)
         
     @staticmethod
     def count_loans():
@@ -114,7 +114,7 @@ class Loan(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close() 
+                Connection.release_connection(con)
      
     @staticmethod
     def return_loan(id):
@@ -138,7 +138,7 @@ class Loan(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close()  
+                Connection.release_connection(con) 
     
     @staticmethod
     def delete_loan(id):
@@ -155,7 +155,7 @@ class Loan(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close()  
+                Connection.release_connection(con) 
         
     @staticmethod
     def get_detail_loan(id):
@@ -182,7 +182,7 @@ class Loan(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close()  
+                Connection.release_connection(con) 
     @staticmethod
     def update_loan(id,book_id,borrower_id,issued_books):
         con = None
@@ -199,7 +199,7 @@ class Loan(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close()  
+                Connection.release_connection(con) 
     
     @staticmethod
     def get_items_for_loan(id):
@@ -236,7 +236,7 @@ class Loan(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close() 
+                Connection.release_connection(con)
     
     @staticmethod
     def get_available_books(id):
@@ -266,7 +266,7 @@ class Loan(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close() 
+                Connection.release_connection(con)
     @staticmethod
     def get_issued_books_loan(id):
         con = None
@@ -295,7 +295,7 @@ class Loan(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close()    
+                Connection.release_connection(con)   
 
     @staticmethod
     def get_single_loan(id):
@@ -319,5 +319,5 @@ class Loan(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close()
+                Connection.release_connection(con)
 

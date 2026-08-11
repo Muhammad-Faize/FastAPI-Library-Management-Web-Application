@@ -28,7 +28,7 @@ class Author(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close()  
+                Connection.release_connection(con) 
 
     @staticmethod
     def get_auhtor():
@@ -45,8 +45,7 @@ class Author(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close() 
-                
+                Connection.release_connection(con)                
     @staticmethod
     def get_auhtor_by_name(author_name):
         con = None
@@ -65,7 +64,7 @@ class Author(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close() 
+                Connection.release_connection(con)
                 
     @staticmethod
     def get_auhtor_by_id(id):
@@ -84,7 +83,7 @@ class Author(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close() 
+                Connection.release_connection(con) 
     
     @staticmethod
     def delete_author(id):
@@ -104,7 +103,7 @@ class Author(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close()    
+                Connection.release_connection(con)    
     @staticmethod
     def update_author(id,name):
         con = None
@@ -128,7 +127,7 @@ class Author(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close()     
+                Connection.release_connection(con)     
 
     @staticmethod
     def search_author(search):
@@ -150,4 +149,4 @@ class Author(BaseModel):
             if cur:
                 cur.close()
             if con:
-                con.close() 
+                Connection.release_connection(con) 
