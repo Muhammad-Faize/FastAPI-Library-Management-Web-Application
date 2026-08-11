@@ -19,7 +19,8 @@ connection_pool = pool.SimpleConnectionPool(
     dbname=dbname,
     user=user,
     password=password,
-    port=port
+    port=port,
+    sslmode="require"
 )
 
 
