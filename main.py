@@ -9,7 +9,6 @@ from routes import borrower
 from routes import book
 from routes import loan
 
-
 app = FastAPI() 
 Create_table.create_table()
 

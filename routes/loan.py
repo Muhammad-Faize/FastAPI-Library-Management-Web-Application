@@ -56,7 +56,6 @@ def add_loan(request: Request,borrower_name: str = Form(...)):
                 "request": request,
                 "borrowers": borrowers,
                 "books": books,
-                "loan_cart": loan_cart,
                 "msg": msg
             }
         )
