@@ -1,11 +1,13 @@
 from fastapi import Request,Form,APIRouter,Depends
 from fastapi.responses import RedirectResponse
 import backend.Users as Users
+import Connection
 from config import templates
 import auth
 from pydantic import EmailStr
 
 router = APIRouter()
+
 
 @router.get('/get-user')
 def get_user(request:Request,user:dict = Depends(auth.require_role(['admin','user']))):
@@ -25,8 +27,8 @@ def add_user_page(request:Request,user:dict = Depends(auth.require_role(['admin'
     )
 
 @router.post('/add-user')
-def add_user(request:Request,username:str = Form(...),email:str = Form(...),password:str = Form(...),user:dict = Depends(auth.require_role(['admin']))):
-    user = Users.User(username=username,email=email,password=password)
+def add_user(request:Request,username:str = Form(...),email:str = Form(...),password:str = Form(...),role:str = Form(...),user:dict = Depends(auth.require_role(['admin']))):
+    user = Users.User(username=username,email=email,password=password,role=role)
     msg = user.register()
     users = Users.User.get_user()
     if msg['status'] == "success":
@@ -56,15 +58,20 @@ def delete_user(request:Request,id:int,user:dict = Depends(auth.require_role(['a
 @router.get('/update-user-page/{id}')
 def update_user_page(request:Request,id:int,user:dict = Depends(auth.require_role(['admin']))):
     data = Users.User.get_user_detail(id)
+    con,cur = Connection.connection()
+    cur.execute('''SELECT id,role FROM Roles''')
+    roles = [dict(row) for row in cur.fetchall()]
+    cur.close()
+    Connection.release_connection(con)
     return templates.TemplateResponse(
         request,
         "users/update_user.html",
-        {'request':request,'id':id,'data':data}
+        {'request':request,'id':id,'data':data,'roles':roles}
     )
 
 @router.post('/update-user')
-def update_user(request:Request,id:int = Form(...),username:str=Form(...),email:EmailStr = Form(...),password:str = Form(default=''),user:dict = Depends(auth.require_role(['admin']))):
-    msg = Users.User.update_user(id,username,email,password)
+def update_user(request:Request,id:int = Form(...),username:str=Form(...),email:EmailStr = Form(...),role:str = Form(...),user:dict = Depends(auth.require_role(['admin']))):
+    msg = Users.User.update_user(id,username,email,role)
     users = Users.User.get_user()
     if msg['status'] == 'success':
         return templates.TemplateResponse(
@@ -74,11 +81,34 @@ def update_user(request:Request,id:int = Form(...),username:str=Form(...),email:
         )
     else:
         data = Users.User.get_user_detail(id)
+        con,cur = Connection.connection()
+        cur.execute('''SELECT id,role FROM Roles''')
+        roles = [dict(row) for row in cur.fetchall()]
+        cur.close()
+        Connection.release_connection(con)
         return templates.TemplateResponse(
             request,
             "users/update_user.html",
-            {'request':request,'id':id,'data':data,'msg':msg}
+            {'request':request,'id':id,'data':data,'role':roles}
         )
+
+@router.get('/update-password-page/{id}')
+def update_password_page(request:Request,id:int):
+    data = Users.User.get_user_detail(id)
+    return templates.TemplateResponse(
+        request,
+        "users/update_password.html",
+        {'request':request,'data':data,'id':id}
+    )
+@router.post('/update-password')
+def update_password(request:Request,id:int = Form(...),password:str = Form(...)):
+   msg = Users.User.update_password(id,password) 
+   users = Users.User.get_user()
+   return templates.TemplateResponse(
+       request,
+       "users/get_user.html",
+       {'request':request,'msg':msg,'users':users}
+   )
 
 @router.get('/login-page')
 def login_page(request:Request):

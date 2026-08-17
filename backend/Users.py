@@ -4,12 +4,11 @@ from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=['bcrypt'],deprecated = "auto")
 
-Admin_Email = ["mfaize06@gmail.com"]
-
 class User(BaseModel):
     username:str = Field(min_length=1,max_length=255,description="Enter username.")
     email:EmailStr = Field(description="Enter email.")
     password:str = Field(min_length=1,max_length=72,description="Enter password.")
+    role:str = Field(min_length=1,max_length=72,description="Enter role.")
     
     @field_validator('username')
     def clean_username(cls, username):
@@ -29,10 +28,7 @@ class User(BaseModel):
             if cur.fetchone():
                 return {"status":"failure","detail":"Email is already registered"}
             hashed_password = pwd_context.hash(self.password)
-            if self.email.lower() not in Admin_Email:
-                role_id = User.get_role_id('user')['id']
-            else:
-                role_id = User.get_role_id('admin')['id']
+            role_id = User.get_role_id(self.role)['id']
             cur.execute('''INSERT INTO Users (username,email,hashed_password,role_id) VALUES (%s,%s,%s,%s)''',(self.username.lower(),self.email.lower(),hashed_password,role_id))
             con.commit()
             return {"status":"success","detail":"Account is registered"}
@@ -99,7 +95,7 @@ class User(BaseModel):
         cur = None
         try:
             con,cur = Connection.connection()
-            cur.execute('''SELECT username,email,hashed_password FROM Users WHERE Id = %s ''',(id,))
+            cur.execute('''SELECT username,email,hashed_password,role_id FROM Users WHERE Id = %s ''',(id,))
             data = [dict(row) for row in cur.fetchall()]
             return data
         except Exception as error: 
@@ -111,7 +107,7 @@ class User(BaseModel):
             if con:
                 Connection.release_connection(con)         
     
-    def update_user(id,username,email,password):
+    def update_user(id,username,email,role):
         con = None
         cur = None
         try:
@@ -124,12 +120,7 @@ class User(BaseModel):
                     return {'status':"failure","detail":"Username already exists"}
             if username.isdigit():
                 return {"status":"failure","detail":"Username must contain alphabets."}
-            data = User.get_user_detail(id)
-            if not (password.strip()):
-                password = data[0]['hashed_password']
-            else:
-                password = pwd_context.hash(password)
-            cur.execute('''UPDATE Users SET username = %s, email = %s, hashed_password = %s WHERE Id = %s ''',(username.lower(),email.lower(),password,id))
+            cur.execute('''UPDATE Users SET username = %s, email = %s,role_id = %s WHERE Id = %s ''',(username.lower(),email.lower(),role,id))
             con.commit()
             return {'status':"success",'detail':"User updated successfully."}
         except Exception as error: 
@@ -139,7 +130,26 @@ class User(BaseModel):
             if cur:
                 cur.close()
             if con:
-                Connection.release_connection(con)        
+                Connection.release_connection(con)     
+        
+    @staticmethod
+    def update_password(id,password):
+        con = None
+        cur = None
+        try:
+            con,cur = Connection.connection()
+            hashed_password = pwd_context.hash(password)
+            cur.execute('''UPDATE Users SET hashed_password = %s WHERE id = %s ''',(hashed_password,id))
+            con.commit()
+            return {'status':"success",'detail':"password updated successfully."}
+        except Exception as error: 
+            return {'status':"failure","detail":f"error at update_password :{error}"}    
+        
+        finally:
+            if cur:
+                cur.close()
+            if con:
+                Connection.release_connection(con)              
     
     @staticmethod    
     def login(username,password):

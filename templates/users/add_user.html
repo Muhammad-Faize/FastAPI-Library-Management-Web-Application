@@ -21,7 +21,12 @@
             <input id="email" type="email" name="email" placeholder="Enter Email" required autocomplete = "off">
             <label for="password">Password:</label>
             <input id="password" type="password" name="password" placeholder="Enter password" required autocomplete = "off">
-
+            <label for="role">Role:</label>
+            <select id="role" name="role" required>
+                <option value="">-- Select a role --</option>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+            </select>
             <div class="page-actions">
                 <button type="submit">Add User</button>
                 <button type="submit" class="third" formaction="/get-user" formmethod="GET" formnovalidate>Back</button>
