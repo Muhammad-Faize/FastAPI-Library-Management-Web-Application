@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update User</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+</head>
+<body>
+    <div class="page-card">
+        {%if msg %}
+        <div class='message-box-{{msg["status"]}}'>{{msg['detail']}} </div>
+        {% endif %}
+        <h1>Update User</h1>
+        <p class="subtitle">Edit the selected user details below.</p>
+
+        <form action="/update-user" method="POST">
+            <input type="hidden" name="id" value="{{id}}">
+            <label for="name">Username:</label>
+            <input id="name" type="text" name="username" value="{{data[0]['username']}}" required autocomplete = "off">
+            <label for="email">Email:</label>
+            <input id="email" type="text" name="email" value="{{data[0]['email']}}" required autocomplete = "off">
+            <label for="password">Password:</label>
+            <input id="password" type="password" placeholder='Update Password' name="password" autocomplete = "off">
+
+            <div class="page-actions">
+                <button type="submit">Update User</button>
+                <button type="submit" class="third" formaction="/get-user" formmethod="GET" formnovalidate>Back</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

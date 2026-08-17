@@ -1,12 +1,12 @@
-from fastapi import APIRouter, Request, Form
-
+from fastapi import APIRouter, Request, Form,Depends
+import auth
 import backend.Authors as Authors ,backend.Books as Books
 from config import templates
 
 router = APIRouter()
 
 @router.get("/get-book")
-def get_books(request:Request):
+def get_books(request:Request,user:dict = Depends(auth.require_role(['admin',"user"]))):
     books = Books.Book.get_book()
     return templates.TemplateResponse(
         request,
@@ -15,7 +15,7 @@ def get_books(request:Request):
     )
 #--------------------------------------------------
 @router.get("/add-book-page")
-def add_book_page(request:Request):
+def add_book_page(request:Request,user:dict = Depends(auth.require_role(['admin']))):
     authors = Authors.Author.get_auhtor()
     return templates.TemplateResponse(
         request,
@@ -23,7 +23,7 @@ def add_book_page(request:Request):
         {"request":request,"books":authors,"name":"","quantity":"","search":""}
     )
 @router.post("/add-book")
-def add_book(request:Request,name:str = Form(...),author_id:int=Form(...),quantity:int=Form(...),search:str =Form(default="")):
+def add_book(request:Request,name:str = Form(...),author_id:int=Form(...),quantity:int=Form(...),search:str =Form(default=""),user:dict = Depends(auth.require_role(['admin']))):
     if author_id == 0:
         results = Authors.Author.search_author(search)
         if results:
@@ -60,7 +60,7 @@ def add_book(request:Request,name:str = Form(...),author_id:int=Form(...),quanti
     ) 
 #----------------------------------------------------
 @router.get("/delete-book/{id}")
-def delete_book(request:Request,id:int):
+def delete_book(request:Request,id:int,user:dict = Depends(auth.require_role(['admin']))):
     msg = Books.Book.delete_book(id)
     books = Books.Book.get_book()
     return templates.TemplateResponse(
@@ -70,7 +70,7 @@ def delete_book(request:Request,id:int):
     ) 
 #----------------------------------------------------
 @router.get("/update-book-page/{id}")
-def update_book_page(request:Request,id:int):
+def update_book_page(request:Request,id:int,user:dict = Depends(auth.require_role(['admin']))):
     name,quantity = Books.Book.get_book_by_id(id)
     return templates.TemplateResponse(
         request,
@@ -78,7 +78,7 @@ def update_book_page(request:Request,id:int):
         {"request":request,"id":id,"name":name,"quantity":quantity}
     )
 @router.post("/update-book")
-def update_book(request:Request,id:int = Form(...),name:str = Form(...),quantity:int=Form(...)):
+def update_book(request:Request,id:int = Form(...),name:str = Form(...),quantity:int=Form(...),user:dict = Depends(auth.require_role(['admin']))):
     msg = Books.Book.update_book(id,name,quantity)
     books = Books.Book.get_book()
     return templates.TemplateResponse(
@@ -88,7 +88,7 @@ def update_book(request:Request,id:int = Form(...),name:str = Form(...),quantity
     ) 
 #-------------------------------------------------------------
 @router.get('/get-book-search')
-def get_book_search(request: Request, search: str):  
+def get_book_search(request: Request, search: str,user:dict = Depends(auth.require_role(['admin',"user"]))):  
     books = Books.Book.get_book_search(search)
     return templates.TemplateResponse(
         request,
@@ -100,7 +100,7 @@ def get_book_search(request: Request, search: str):
         }
     )
 @router.post('/search-author')
-def search_author(request:Request,search:str=Form(...),name:str=Form(default=""),quantity:int=Form(default=0)):
+def search_author(request:Request,search:str=Form(...),name:str=Form(default=""),quantity:int=Form(default=0),user:dict = Depends(auth.require_role(['admin']))):
     results = Authors.Author.search_author(search)
     return templates.TemplateResponse(
         request,
@@ -108,7 +108,7 @@ def search_author(request:Request,search:str=Form(...),name:str=Form(default="")
         {"request":request,"results":results,'search':search,'name':name,'quantity':quantity}
     )
 @router.get('/get-issued-detail/{id}')
-def get_issued_detail(request:Request,id:int):
+def get_issued_detail(request:Request,id:int,user:dict = Depends(auth.require_role(['admin',"user"]))):
     data = Books.Book.get_issued_detail(id)
     return templates.TemplateResponse(
         request,

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+</head>
+<body>
+    <div class="page-card">
+        {% if msg %}
+        {% set is_success = msg.status|lower == 'success' %}
+        {% set msg_class = 'message-box-success' if is_success else 'message-box-failure' %}
+        <div class="{{ msg_class }}">{{ msg.detail }}</div>
+        {% endif %}
+        <h2>Lists of Users</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role }}</td>
+                <td><a class="icon-link" href="/update-user-page/{{user.id}}" aria-label="Edit user">✏️</a>
+                <a class="icon-link danger" href="/delete-user/{{user.id}}" onclick='return confirm("Are you sure you want to delete!")' aria-label="Delete user">🗑️</a></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        <div class="page-actions">
+            <form action="/add-user-page" method="GET">
+                <button type="submit">ADD</button>
+            </form>
+            <form action="/" method="GET">
+                <button type="submit" class="secondary">Back to main page</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

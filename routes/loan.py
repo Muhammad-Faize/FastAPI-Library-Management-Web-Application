@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Request, Form
-from fastapi import FastAPI, Request,Query
+from fastapi import FastAPI, Request,Query,Depends
 import backend.Loans as Loans, backend.Loans_cart as Loans_cart,backend.Borrowers as Borrowers,backend.Books as Books ,Connection
 from config import templates
+import auth
 
 router = APIRouter()
 
 @router.get("/get-loan")
-def get_loans(request: Request, page: int = 1, limit: int = 10):
+def get_loans(request: Request, page: int = 1, limit: int = 10,user:dict = Depends(auth.require_role(['admin',"user"]))):
 
     offset = (page - 1) * limit
 
@@ -28,7 +29,7 @@ def get_loans(request: Request, page: int = 1, limit: int = 10):
     )
 #-------------------------------------------------------
 @router.get("/add-loan-page")
-def add_loan_page(request:Request):
+def add_loan_page(request:Request,user:dict = Depends(auth.require_role(['admin']))):
     borrowers = Borrowers.Borrower.get_borrower()
     books = Loans.Loan.get_unborrowed_book()
     return templates.TemplateResponse(
@@ -37,7 +38,7 @@ def add_loan_page(request:Request):
         {"request":request,"borrowers":borrowers,"books":books}
     )
 @router.post("/add-loan")
-def add_loan(request: Request,borrower_name: str = Form(...)):
+def add_loan(request: Request,borrower_name: str = Form(...),user:dict = Depends(auth.require_role(['admin']))):
     borrower_id = Borrowers.Borrower.get_borrower_by_name(borrower_name)
     loan_cart = Loans_cart.Loan_cart.get_loan_cart()
     if borrower_id is None:
@@ -166,7 +167,7 @@ def add_loan(request: Request,borrower_name: str = Form(...)):
     )
 #----------------------------------------------------------
 @router.get("/return-loan/{id}")
-def return_loan(request:Request,id:int):
+def return_loan(request:Request,id:int,user:dict = Depends(auth.require_role(['admin']))):
     msg = Loans.Loan.return_loan(id)
     page = 1
     limit = 10
@@ -191,7 +192,7 @@ def return_loan(request:Request,id:int):
 
 #-----------------------------------------------------------
 @router.get("/update-loan-page/{id}")
-def update_loan_page(request:Request,id:int):
+def update_loan_page(request:Request,id:int,user:dict = Depends(auth.require_role(['admin']))):
     o_book,o_borrower,o_book_name,o_borrower_name,issued_books = Loans.Loan.get_detail_loan(id)
     books,borrowers = Loans.Loan.get_items_for_loan(id)
     return templates.TemplateResponse(  
@@ -200,7 +201,7 @@ def update_loan_page(request:Request,id:int):
         {"request":request,"id":id,"o_book":o_book,"o_borrower":o_borrower,"o_book_name":o_book_name,"o_borrower_name":o_borrower_name,"borrowers":borrowers,"books":books,"issued_books":issued_books}
     )
 @router.post("/update-loan")
-def update_loan(request: Request,id: int = Form(...),book_id: int = Form(...),borrower_id: int = Form(...),issued_books: int = Form(...)):
+def update_loan(request: Request,id: int = Form(...),book_id: int = Form(...),borrower_id: int = Form(...),issued_books: int = Form(...),user:dict = Depends(auth.require_role(['admin']))):
     msg = None
     if issued_books < 1:
         msg = {
@@ -261,7 +262,7 @@ def update_loan(request: Request,id: int = Form(...),book_id: int = Form(...),bo
     )
 #---------------------------------------------------------------
 @router.post("/get-loan-cart")
-def get_loan_cart(request:Request,borrower_name:str = Form(...),book_name:str = Form(...),quantity:int=Form(...)):
+def get_loan_cart(request:Request,borrower_name:str = Form(...),book_name:str = Form(...),quantity:int=Form(...),user:dict = Depends(auth.require_role(['admin']))):
     books = Loans.Loan.get_unborrowed_book()
     book_id = Books.Book.get_book_by_name(book_name)
     if book_id is None:
@@ -286,7 +287,7 @@ def get_loan_cart(request:Request,borrower_name:str = Form(...),book_name:str = 
         {"request":request,'books':books,'borrower_name':borrower_name,'loan_cart':loan_cart,'msg':msg}
     )
 @router.get('/delete-loan-cart/{id}')
-def delete_loan_cart(request:Request,id:int,borrower_name:str = Query(None)):
+def delete_loan_cart(request:Request,id:int,borrower_name:str = Query(None),user:dict = Depends(auth.require_role(['admin']))):
     borrowers = Borrowers.Borrower.get_borrower()
     Loans_cart.Loan_cart.delete_loan_cart(id)
     books = Loans.Loan.get_unborrowed_book()

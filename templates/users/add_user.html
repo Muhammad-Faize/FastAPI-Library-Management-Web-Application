@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADD AUTHOR</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+</head>
+<body>
+    <div class="page-card">
+        {%if msg %}
+        <div class='message-box-{{msg["status"]}}'>{{msg['detail']}} </div>
+        {% endif %}
+        <h1>Add User</h1>
+        <p class="subtitle">Create a new user for the library.</p>
+
+        <form action="/add-user" method="POST">
+            <label for="name">Username:</label>
+            <input id="name" type="text" name="username" placeholder="Enter User Name" required autocomplete = "off">
+            <label for="email">Email:</label>
+            <input id="email" type="email" name="email" placeholder="Enter Email" required autocomplete = "off">
+            <label for="password">Password:</label>
+            <input id="password" type="password" name="password" placeholder="Enter password" required autocomplete = "off">
+
+            <div class="page-actions">
+                <button type="submit">Add User</button>
+                <button type="submit" class="third" formaction="/get-user" formmethod="GET" formnovalidate>Back</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

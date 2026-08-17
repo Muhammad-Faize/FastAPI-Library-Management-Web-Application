@@ -7,7 +7,20 @@
     <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
 </head>
 <body>
-    <div class="page-card">
+    <div class="page-card auth-card">
+    <div class="top-bar">
+        {% if user %}
+            <h2>Welcome, {{ user['username'] }}!</h2>
+            <div class="top-bar-links">
+                <a href="/logout" class="secondary">Logout</a>
+            </div>
+        {% else %}
+            <h2>Welcome!</h2>
+            <div class="top-bar-links">
+                <a href="/login-page" class="secondary">Login</a>
+            </div>
+        {% endif %}
+    </div>
         <h1>Library Management System</h1>
         <p class="subtitle">Manage authors, books, borrowers, and loans from one simple dashboard.</p>
         <h2>Features</h2>
@@ -27,6 +40,12 @@
             <div class="feature-card">
                 <p>4. Loans</p>
                 <a href="/get-loan">View Loans →</a>
+            </div>
+        </div>
+        <div class="admin-section">
+            <div class="feature-card admin-card">
+                <p>Manage users</p>
+                <a href="/get-user">View Users →</a>
             </div>
         </div>
     </div>
