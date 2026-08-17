@@ -6,4 +6,5 @@ jinja2
 python-multipart
 python-jose[cryptography]
 passlib[bcrypt]
-email-validator
+bcrypt<4.1
+pydantic[email]
